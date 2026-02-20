@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=SN+Pro:ital,wght@0,200..900;1,200..900&display=swap");
+@import "tailwindcss";
+
+* {
+  font-family: "SN Pro", sans-serif;
+  font-optical-sizing: auto;
+}
+
+/* =========================
+   X.com Color System
+   ========================= */
+@layer base {
+  :root {
+    /* ===== Light Mode ===== */
+    --x-bg: #ffffff; /* main background */
+    --x-blackBg: #000000;
+    --x-surface: #f5f8fa; /* cards / elevated */
+    --x-border: #e1e8ed; /* subtle border */
+    --x-divider: #ccd6dd; /* stronger divider */
+    --x-text: #14171a; /* primary text */
+    --x-textOpposite: #e7e9ea;
+    --x-text-sec: #657786; /* secondary text */
+    --x-text-ter: #8899a6; /* tertiary text */
+    --x-text-light: #aab8c2; /* placeholder / muted */
+
+    /* ===== Brand Colors ===== */
+    --x-blue: #1da1f2;
+    --x-blue-hover: #1a8cd8;
+    --x-blue-dark: #187dc0;
+    --x-red: #f4245e;
+    --x-green: #00ba7c;
+  }
+
+  [data-theme="dark"] {
+    /* ===== Dark Mode (Lights Out) ===== */
+    --x-bg: #000000;
+    --x-blackBg: #ffffff;
+    --x-surface: #16181c;
+    --x-border: #2f3336;
+    --x-divider: #2f3336;
+    --x-text: #e7e9ea;
+    --x-textOpposite: #14171a;
+    --x-text-sec: #828385;
+    --x-text-ter: #536471;
+    --x-text-light: #536471;
+
+    /* Brand colors remain same */
+    --x-blue: #1da1f2;
+    --x-blue-hover: #1a8cd8;
+    --x-blue-dark: #187dc0;
+    --x-red: #f4245e;
+    --x-green: #00ba7c;
+  }
+}
+
+/* =========================
+   Tailwind Theme Mapping
+   ========================= */
+@theme inline {
+  --color-x-bg: var(--x-bg);
+  --color-x-bgOpposite: var(--x-blackBg);
+  --color-x-surface: var(--x-surface);
+  --color-x-border: var(--x-border);
+  --color-x-divider: var(--x-divider);
+  --color-x-text: var(--x-text);
+  --color-x-textOpposite: var(--x-textOpposite);
+  --color-x-text-sec: var(--x-text-sec);
+  --color-x-text-ter: var(--x-text-ter);
+  --color-x-text-light: var(--x-text-light);
+
+  --color-x-blue: var(--x-blue);
+  --color-x-blue-hover: var(--x-blue-hover);
+  --color-x-blue-dark: var(--x-blue-dark);
+  --color-x-red: var(--x-red);
+  --color-x-green: var(--x-green);
+}
+
+/* =========================
+   Base Application Styles
+   ========================= */
+@layer base {
+  html {
+    @apply bg-x-bg text-x-text;
+  }
+
+  body {
+    @apply bg-x-bg text-x-text min-h-screen antialiased;
+  }
+
+  hr {
+    @apply border-x-divider;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+
+  /* Chrome, Edge, Safari */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 0; /* removes top & bottom spacing */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--x-border);
+    border-radius: 9999px;
+    border: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-button {
+    display: none; /* removes top & bottom arrows */
+  }
+
+  /* Firefox */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-x-divider) transparent;
+  }
+}
