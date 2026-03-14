@@ -1,5 +1,6 @@
 import TabItem from "../ReusedComponents/TabItem";
 import SettingIcon from "../ReusedComponents/SettingIcon";
+import BackButton from "../ReusedComponents/BackButton";
 
 const NotifyHeader = () => {
   const tabs = [
@@ -16,7 +17,8 @@ const NotifyHeader = () => {
   return (
     <div>
       <div className="flex items-center justify-between px-4 py-2">
-        <div>
+        <div className="flex items-center gap-x-2">
+          <BackButton />
           <span className="text-x-text text-lg font-semibold sm:text-xl">
             Notifications
           </span>
