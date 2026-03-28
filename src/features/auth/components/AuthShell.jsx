@@ -3,9 +3,9 @@ import XLogo from "../../../shared/assets/logo/x-logo.svg";
 const AuthShell = ({ title, children, footer, bottomContent }) => {
   return (
     <div className="bg-x-bg flex min-h-screen w-full justify-center px-6 py-10">
-      <div className="grid w-full max-w-6xl items-start gap-12 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-20 xl:pt-16">
+      <div className="grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-20">
         <section className="hidden items-start justify-center lg:flex">
-          <img className="mt-8 size-72 xl:size-88" src={XLogo} alt="X logo" />
+          <img className="size-48 xl:size-56" src={XLogo} alt="X logo" />
         </section>
 
         <section className="mx-auto flex w-full max-w-md flex-col lg:max-w-none">
@@ -14,7 +14,7 @@ const AuthShell = ({ title, children, footer, bottomContent }) => {
           </div>
 
           <div>
-            <h1 className="text-x-text text-4xl leading-tight font-extrabold sm:text-5xl">
+            <h1 className="text-x-text text-3xl leading-tight font-extrabold sm:text-5xl">
               {title}
             </h1>
           </div>
