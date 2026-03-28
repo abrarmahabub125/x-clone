@@ -5,7 +5,7 @@ const AuthShell = ({ title, children, footer, bottomContent }) => {
     <div className="bg-x-bg flex min-h-screen w-full justify-center px-6 py-10">
       <div className="grid w-full max-w-6xl items-start gap-12 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-20 xl:pt-16">
         <section className="hidden items-start justify-center lg:flex">
-          <img className="mt-8 size-72 xl:size-[22rem]" src={XLogo} alt="X logo" />
+          <img className="mt-8 size-72 xl:size-88" src={XLogo} alt="X logo" />
         </section>
 
         <section className="mx-auto flex w-full max-w-md flex-col lg:max-w-none">

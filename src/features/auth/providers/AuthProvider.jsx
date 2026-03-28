@@ -1,18 +1,33 @@
 import { useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => localStorage.getItem("x-user") === "1");
+const readStoredUser = () => {
+  try {
+    return localStorage.getItem("x-user") === "1";
+  } catch {
+    return false;
+  }
+};
 
-  const updateUser = (value) => {
-    setUser(value);
-
+const persistUser = (value) => {
+  try {
     if (value) {
       localStorage.setItem("x-user", "1");
       return;
     }
 
     localStorage.removeItem("x-user");
+  } catch {
+    // Ignore storage failures and keep auth state in memory.
+  }
+};
+
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(readStoredUser);
+
+  const updateUser = (value) => {
+    setUser(value);
+    persistUser(value);
   };
 
   return (
