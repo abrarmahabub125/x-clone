@@ -18,6 +18,18 @@ const BookMarkPage = lazy(
 const UserProfilePage = lazy(
   () => import("../features/profile/pages/UserProfilePage"),
 );
+const ProfilePostsPage = lazy(
+  () => import("../features/profile/pages/ProfilePostsPage"),
+);
+const ProfileRepliesPage = lazy(
+  () => import("../features/profile/pages/ProfileRepliesPage"),
+);
+const ProfileMediaPage = lazy(
+  () => import("../features/profile/pages/ProfileMediaPage"),
+);
+const ProfileLikesPage = lazy(
+  () => import("../features/profile/pages/ProfileLikesPage"),
+);
 const ListPage = lazy(() => import("../features/lists/pages/ListPage"));
 const CommunitiesPage = lazy(
   () => import("../features/communities/pages/CommunitiesPage"),
@@ -107,7 +119,16 @@ const router = createBrowserRouter([
                 ],
               },
               { path: "bookmarks", Component: BookMarkPage },
-              { path: "profile/:userId", Component: UserProfilePage },
+              {
+                path: "profile/:userId",
+                Component: UserProfilePage,
+                children: [
+                  { index: true, Component: ProfilePostsPage },
+                  { path: "replies", Component: ProfileRepliesPage },
+                  { path: "media", Component: ProfileMediaPage },
+                  { path: "likes", Component: ProfileLikesPage },
+                ],
+              },
               { path: "list", Component: ListPage },
               { path: "communities", Component: CommunitiesPage },
               { path: "ads-center", Component: AdsCenter },
