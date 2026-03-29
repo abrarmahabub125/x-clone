@@ -49,6 +49,7 @@ const CreatePostModal = lazy(
 );
 const LoginPage = lazy(() => import("../features/auth/pages/LoginPage"));
 const SignUpPage = lazy(() => import("../features/auth/pages/SignUpPage"));
+const VerifyOtpPage = lazy(() => import("../features/auth/pages/VerifyOtpPage"));
 const LogoutPage = lazy(() => import("../features/auth/pages/LogoutPage"));
 const AllNotifications = lazy(
   () => import("../features/notifications/components/AllNotifications"),
@@ -78,6 +79,7 @@ const router = createBrowserRouter([
     children: [
       { path: "login", Component: LoginPage },
       { path: "signup", Component: SignUpPage },
+      { path: "signup/verify", Component: VerifyOtpPage },
       { path: "logout", Component: LogoutPage },
       {
         element: <RouteProtector />,
@@ -144,3 +146,4 @@ const router = createBrowserRouter([
 ]);
 
 export { router };
+
