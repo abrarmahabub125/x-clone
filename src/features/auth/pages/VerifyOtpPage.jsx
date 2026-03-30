@@ -1,194 +1,68 @@
-import { Link, Navigate, useLocation, useNavigate } from "react-router";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { Link } from "react-router";
 import AuthShell from "../components/AuthShell";
-import { useAuth } from "../hooks/useAuth";
 
 const OTP_LENGTH = 6;
 
-const createEmptyOtp = () => Array.from({ length: OTP_LENGTH }, () => "");
-
-const maskEmail = (email) => {
-  const [name, domain] = email.split("@");
-
-  if (!domain) {
-    return email;
-  }
-
-  const visibleNamePart = name.slice(0, 2);
-  const hiddenNamePart = "*".repeat(Math.max(0, name.length - visibleNamePart.length));
-
-  return `${visibleNamePart}${hiddenNamePart}@${domain}`;
-};
-
 const VerifyOtpPage = () => {
-  const { pendingOtp, verifyOtp, resendOtp } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [otpDigits, setOtpDigits] = useState(createEmptyOtp);
-  const [errorText, setErrorText] = useState("");
-  const [infoText, setInfoText] = useState("");
-  const [secondsLeft, setSecondsLeft] = useState(() => {
-    if (!pendingOtp) {
-      return 0;
+  const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(""));
+  const inputsRef = useRef([]);
+
+  // 🔹 Handle change
+  const handleChange = (value, index) => {
+    if (!/^\d?$/.test(value)) return; // only digit
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // move next
+    if (value && index < OTP_LENGTH - 1) {
+      inputsRef.current[index + 1].focus();
     }
+  };
 
-    return Math.max(0, Math.ceil((pendingOtp.expiresAt - Date.now()) / 1000));
-  });
-  const inputRefs = useRef([]);
-
-  useEffect(() => {
-    inputRefs.current[0]?.focus();
-  }, []);
-
-  useEffect(() => {
-    if (!pendingOtp) {
-      return undefined;
+  // 🔹 Handle key (backspace)
+  const handleKeyDown = (e, index) => {
+    if (e.key === "Backspace") {
+      if (!otp[index] && index > 0) {
+        inputsRef.current[index - 1].focus();
+      }
     }
+  };
 
-    const updateSeconds = () => {
-      setSecondsLeft(Math.max(0, Math.ceil((pendingOtp.expiresAt - Date.now()) / 1000)));
-    };
+  // 🔹 Handle paste
+  const handlePaste = (e) => {
+    const pasteData = e.clipboardData.getData("text").slice(0, OTP_LENGTH);
+    if (!/^\d+$/.test(pasteData)) return;
 
-    updateSeconds();
-    const timerId = setInterval(updateSeconds, 1000);
+    const newOtp = pasteData.split("");
+    setOtp(newOtp);
 
-    return () => clearInterval(timerId);
-  }, [pendingOtp]);
-
-  if (!pendingOtp) {
-    return <Navigate to="/signup" replace />;
-  }
-
-  const visibleEmail = location.state?.email || pendingOtp.email;
-  const debugOtp = location.state?.debugOtp || pendingOtp.otp;
-
-  const setOtpAtIndex = (index, value) => {
-    setOtpDigits((currentOtpDigits) => {
-      const nextOtpDigits = [...currentOtpDigits];
-      nextOtpDigits[index] = value;
-      return nextOtpDigits;
+    newOtp.forEach((_, i) => {
+      if (inputsRef.current[i]) {
+        inputsRef.current[i].value = newOtp[i];
+      }
     });
   };
 
-  const handleInputChange = (index, event) => {
-    const numericValue = event.target.value.replace(/\D/g, "");
+  // 🔹 Submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const finalOtp = otp.join("");
+    console.log("OTP:", finalOtp);
 
-    if (!numericValue) {
-      setOtpAtIndex(index, "");
-      return;
-    }
-
-    const incomingDigits = numericValue.slice(0, OTP_LENGTH).split("");
-
-    setOtpDigits((currentOtpDigits) => {
-      const nextOtpDigits = [...currentOtpDigits];
-      let cursor = index;
-
-      incomingDigits.forEach((digit) => {
-        if (cursor < OTP_LENGTH) {
-          nextOtpDigits[cursor] = digit;
-          cursor += 1;
-        }
-      });
-
-      return nextOtpDigits;
-    });
-
-    const focusIndex = Math.min(index + incomingDigits.length, OTP_LENGTH - 1);
-    inputRefs.current[focusIndex]?.focus();
-
-    setErrorText("");
-    setInfoText("");
+    // 👉 API call here
   };
-
-  const handleKeyDown = (index, event) => {
-    if (event.key === "Backspace" && !otpDigits[index] && index > 0) {
-      setOtpAtIndex(index - 1, "");
-      inputRefs.current[index - 1]?.focus();
-    }
-
-    if (event.key === "ArrowLeft" && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-
-    if (event.key === "ArrowRight" && index < OTP_LENGTH - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handlePaste = (event) => {
-    event.preventDefault();
-
-    const pastedDigits = event.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
-      .slice(0, OTP_LENGTH);
-
-    if (!pastedDigits) {
-      return;
-    }
-
-    const nextOtpDigits = createEmptyOtp();
-    pastedDigits.split("").forEach((digit, index) => {
-      nextOtpDigits[index] = digit;
-    });
-
-    setOtpDigits(nextOtpDigits);
-    inputRefs.current[Math.max(0, pastedDigits.length - 1)]?.focus();
-
-    setErrorText("");
-    setInfoText("");
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const otpCode = otpDigits.join("");
-
-    if (otpCode.length !== OTP_LENGTH) {
-      setErrorText("Please enter the full 6-digit OTP.");
-      return;
-    }
-
-    const verificationResult = verifyOtp(otpCode);
-
-    if (verificationResult.ok) {
-      navigate("/", { replace: true });
-      return;
-    }
-
-    if (verificationResult.reason === "expired") {
-      setErrorText("OTP expired. Resend a new code and try again.");
-      return;
-    }
-
-    setErrorText("Incorrect OTP. Please try again.");
-  };
-
-  const handleResendOtp = () => {
-    const nextPendingOtp = resendOtp();
-
-    if (!nextPendingOtp) {
-      navigate("/signup", { replace: true });
-      return;
-    }
-
-    setOtpDigits(createEmptyOtp());
-    setSecondsLeft(Math.max(0, Math.ceil((nextPendingOtp.expiresAt - Date.now()) / 1000)));
-    setInfoText(`A new OTP has been generated for ${nextPendingOtp.email}.`);
-    setErrorText("");
-    inputRefs.current[0]?.focus();
-  };
-
-  const minutePart = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
-  const secondPart = String(secondsLeft % 60).padStart(2, "0");
 
   return (
     <AuthShell
       title="Verify your email"
       footer={
         <div className="space-y-2">
-          <p className="text-x-text-sec text-[15px] leading-6">Used a wrong email?</p>
+          <p className="text-x-text-sec text-[15px] leading-6">
+            Used a wrong email?
+          </p>
           <Link
             className="text-x-blue text-sm font-semibold hover:underline"
             to="/signup"
@@ -203,74 +77,54 @@ const VerifyOtpPage = () => {
           <p className="text-x-text-sec text-sm leading-6">
             We sent a 6-digit security code to
             <span className="text-x-text ml-1 font-semibold">
-              {maskEmail(visibleEmail)}
+              abrarmahabub@gmail.com
             </span>
             .
           </p>
 
-          <form className="mt-5 space-y-5" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-6 gap-2 sm:gap-3" onPaste={handlePaste}>
-              {otpDigits.map((digit, index) => (
+          <form onSubmit={handleSubmit} className="mt-5 space-y-5">
+            {/* 🔥 OTP INPUTS */}
+            <div
+              className="grid grid-cols-6 gap-2 sm:gap-3"
+              onPaste={handlePaste}
+            >
+              {otp.map((digit, index) => (
                 <input
-                  key={`otp-digit-${index + 1}`}
-                  ref={(element) => {
-                    inputRefs.current[index] = element;
-                  }}
+                  key={index}
+                  ref={(el) => (inputsRef.current[index] = el)}
                   type="text"
                   inputMode="numeric"
-                  autoComplete={index === 0 ? "one-time-code" : "off"}
-                  maxLength={OTP_LENGTH}
+                  maxLength={1}
                   value={digit}
-                  onChange={(event) => handleInputChange(index, event)}
-                  onKeyDown={(event) => handleKeyDown(index, event)}
-                  className={`text-x-text h-14 w-full rounded-xl border text-center text-2xl font-bold outline-none transition-all duration-200 ${
-                    digit
-                      ? "border-x-blue bg-x-surface shadow-[0_0_0_1px_rgba(29,155,240,0.45)]"
-                      : "border-x-divider bg-transparent"
-                  } focus:border-x-blue focus:bg-x-surface focus:shadow-[0_0_0_2px_rgba(29,155,240,0.35)]`}
-                  aria-label={`OTP digit ${index + 1}`}
+                  onChange={(e) => handleChange(e.target.value, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  className="text-x-text border-x-divider focus:border-x-blue h-14 w-full rounded-xl border bg-transparent text-center text-2xl font-bold transition-all duration-200 outline-none"
                 />
               ))}
             </div>
 
+            {/* TIMER */}
             <div className="border-x-divider flex items-center justify-between rounded-xl border px-3 py-2">
               <span className="text-x-text-sec text-sm">Code expires in</span>
-              <span
-                className={`font-mono text-sm font-semibold ${
-                  secondsLeft === 0 ? "text-red-400" : "text-x-text"
-                }`}
-              >
-                {minutePart}:{secondPart}
+              <span className="text-x-text font-mono text-sm font-semibold">
+                5:00
               </span>
             </div>
 
-            {errorText && <p className="text-sm text-red-400">{errorText}</p>}
-            {infoText && <p className="text-sm text-emerald-400">{infoText}</p>}
-
             <button
               type="submit"
-              className="bg-x-bgOpposite text-x-textOpposite flex w-full items-center justify-center rounded-full px-4 py-3 text-[15px] font-bold transition-opacity duration-200 hover:opacity-95"
+              className="bg-x-bgOpposite text-x-textOpposite flex w-full items-center justify-center rounded-full px-4 py-3 text-[15px] font-bold"
             >
               Verify and continue
             </button>
 
             <button
               type="button"
-              onClick={handleResendOtp}
-              className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-semibold transition-colors duration-200"
+              className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-semibold"
             >
               Resend OTP
             </button>
           </form>
-        </div>
-
-        <div className="border-x-blue/35 bg-x-blue/10 rounded-xl border px-4 py-3">
-          <p className="text-x-text text-sm leading-6">
-            Demo OTP:
-            <span className="text-x-blue ml-1 font-mono text-base font-bold tracking-[0.24em]">
-              {debugOtp}
-            </span>
-          </p>
         </div>
       </div>
     </AuthShell>

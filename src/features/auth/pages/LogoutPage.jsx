@@ -3,13 +3,13 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 
 const LogoutPage = () => {
-  const { setUser } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    setUser(false);
+    logout();
     navigate("/login", { replace: true });
-  }, [navigate, setUser]);
+  }, [logout, navigate]);
 
   return <div className="p-4">Signing out...</div>;
 };

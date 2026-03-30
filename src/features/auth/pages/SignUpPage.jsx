@@ -1,13 +1,11 @@
 import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import AuthShell from "../components/AuthShell";
-import { useAuth } from "../hooks/useAuth";
 
 const inputClassName =
   "border-x-divider text-x-text placeholder:text-x-text-sec focus:border-x-blue w-full rounded-md border bg-transparent px-3 py-4 text-base outline-none transition";
 
 const SignUpPage = () => {
-  const { startOtpVerification } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -36,14 +34,8 @@ const SignUpPage = () => {
       return;
     }
 
-    const pendingOtp = startOtpVerification(formData);
-
     navigate("/signup/verify", {
       replace: true,
-      state: {
-        email: pendingOtp.email,
-        debugOtp: pendingOtp.otp,
-      },
     });
   };
 
@@ -56,7 +48,7 @@ const SignUpPage = () => {
             Already have an account?
           </p>
           <Link
-            className="border-x-divider text-x-blue mt-4 inline-flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-bold transition-colors duration-200 hover:bg-x-surface"
+            className="border-x-divider text-x-blue hover:bg-x-surface mt-4 inline-flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-bold transition-colors duration-200"
             to="/login"
           >
             Sign in
@@ -67,14 +59,14 @@ const SignUpPage = () => {
       <div className="space-y-3">
         <button
           type="button"
-          className="border-x-divider text-x-text flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-medium transition-colors duration-200 hover:bg-x-surface"
+          className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-medium transition-colors duration-200"
         >
           Sign up with Google
         </button>
 
         <button
           type="button"
-          className="border-x-divider text-x-text flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-bold transition-colors duration-200 hover:bg-x-surface"
+          className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-bold transition-colors duration-200"
         >
           Sign up with Apple
         </button>
@@ -91,6 +83,7 @@ const SignUpPage = () => {
             name="name"
             placeholder="Name"
             value={formData.name}
+            autoComplete="none"
             onChange={handleInputChange}
             className={inputClassName}
           />
@@ -102,6 +95,7 @@ const SignUpPage = () => {
             name="email"
             placeholder="Email"
             value={formData.email}
+            autoComplete="none"
             onChange={handleInputChange}
             className={inputClassName}
           />
@@ -113,6 +107,7 @@ const SignUpPage = () => {
             name="password"
             placeholder="Password"
             value={formData.password}
+            autoComplete="none"
             onChange={handleInputChange}
             className={inputClassName}
           />
@@ -125,7 +120,7 @@ const SignUpPage = () => {
           onClick={handleSignUp}
           className="bg-x-bgOpposite text-x-textOpposite mt-2 flex w-full items-center justify-center rounded-full px-4 py-2.5 text-[15px] font-bold transition-opacity duration-200 hover:opacity-95"
         >
-          Continue to OTP verification
+          Continue
         </button>
       </div>
 
