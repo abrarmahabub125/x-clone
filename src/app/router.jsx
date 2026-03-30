@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
+import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
 const App = lazy(() => import("./App"));
 const RootLayout = lazy(() => import("./layouts/RootLayout"));
 const HomePage = lazy(() => import("../features/home/pages/HomePage"));
@@ -72,58 +73,63 @@ const router = createBrowserRouter([
     errorElement: <h1>Hello World!</h1>,
     children: [
       {
-        element: <RootLayout />,
+        element: <ProtectedRoute />,
         children: [
-          { index: true, Component: HomePage },
-          { path: "following", Component: HomePage },
-          { path: "compose/post", Component: CreatePostModal },
           {
-            path: "explore",
-            Component: ExplorePage,
+            element: <RootLayout />,
             children: [
-              { index: true, Component: ForYou },
-              { path: "trending", Component: Trending },
-              { path: "news", Component: News },
-              { path: "sports", Component: Sports },
-              { path: "entertainment", Component: Entertainment },
-            ],
-          },
-          {
-            path: "notifications",
-            Component: NotificationsPage,
-            children: [
-              { index: true, Component: AllNotifications },
-              { path: "mentions", Component: AllMentions },
-            ],
-          },
-          {
-            path: "connect-people",
-            Component: FollowSuggestionsPage,
-            children: [
-              { index: true, Component: FollowHome },
+              { index: true, Component: HomePage },
+              { path: "following", Component: HomePage },
+              { path: "compose/post", Component: CreatePostModal },
               {
-                path: "creators_for_you",
-                Component: CreatorsForYou,
+                path: "explore",
+                Component: ExplorePage,
+                children: [
+                  { index: true, Component: ForYou },
+                  { path: "trending", Component: Trending },
+                  { path: "news", Component: News },
+                  { path: "sports", Component: Sports },
+                  { path: "entertainment", Component: Entertainment },
+                ],
               },
+              {
+                path: "notifications",
+                Component: NotificationsPage,
+                children: [
+                  { index: true, Component: AllNotifications },
+                  { path: "mentions", Component: AllMentions },
+                ],
+              },
+              {
+                path: "connect-people",
+                Component: FollowSuggestionsPage,
+                children: [
+                  { index: true, Component: FollowHome },
+                  {
+                    path: "creators_for_you",
+                    Component: CreatorsForYou,
+                  },
+                ],
+              },
+              { path: "bookmarks", Component: BookMarkPage },
+              {
+                path: "profile/:userId",
+                Component: UserProfilePage,
+                children: [
+                  { index: true, Component: ProfilePostsPage },
+                  { path: "replies", Component: ProfileRepliesPage },
+                  { path: "media", Component: ProfileMediaPage },
+                  { path: "likes", Component: ProfileLikesPage },
+                ],
+              },
+              { path: "list", Component: ListPage },
+              { path: "communities", Component: CommunitiesPage },
+              { path: "ads-center", Component: AdsCenter },
+              { path: "create-space", Component: CreateYourSpace },
+              { path: "settings", Component: SettingsAndPrivacyPage },
+              { path: "business", Component: BusinessPage },
             ],
           },
-          { path: "bookmarks", Component: BookMarkPage },
-          {
-            path: "profile/:userId",
-            Component: UserProfilePage,
-            children: [
-              { index: true, Component: ProfilePostsPage },
-              { path: "replies", Component: ProfileRepliesPage },
-              { path: "media", Component: ProfileMediaPage },
-              { path: "likes", Component: ProfileLikesPage },
-            ],
-          },
-          { path: "list", Component: ListPage },
-          { path: "communities", Component: CommunitiesPage },
-          { path: "ads-center", Component: AdsCenter },
-          { path: "create-space", Component: CreateYourSpace },
-          { path: "settings", Component: SettingsAndPrivacyPage },
-          { path: "business", Component: BusinessPage },
         ],
       },
     ],
