@@ -1,6 +1,9 @@
 import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
 import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
+import VerifyOtp from "../features/auth/pages/VerifyOtp";
+import LoginPage from "../features/auth/pages/Login";
+
 const App = lazy(() => import("./App"));
 const RootLayout = lazy(() => import("./layouts/RootLayout"));
 const HomePage = lazy(() => import("../features/home/pages/HomePage"));
@@ -66,12 +69,18 @@ const FollowHome = lazy(
   () => import("../features/follow/components/FollowHome"),
 );
 
+//Authentication Pages
+const RegisterPage = lazy(() => import("../features/auth/pages/Registration"));
+
 const router = createBrowserRouter([
   {
     path: "/",
     Component: App,
     errorElement: <h1>Hello World!</h1>,
     children: [
+      { path: "register", Component: RegisterPage },
+      { path: "login", Component: LoginPage },
+      { path: "registration/verify-email", Component: VerifyOtp },
       {
         element: <ProtectedRoute />,
         children: [
