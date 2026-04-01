@@ -5,7 +5,18 @@
   font-family: "SN Pro", sans-serif;
   font-optical-sizing: auto;
 }
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+  -webkit-text-fill-color: #000;
+  transition: background-color 5000s ease-in-out 0s;
+}
 
+input:-internal-autofill-selected {
+  background-color: white !important;
+  color: #000 !important;
+}
 /* =========================
    X.com Color System
    ========================= */

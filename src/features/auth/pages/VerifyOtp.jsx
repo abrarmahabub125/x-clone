@@ -100,11 +100,11 @@ const VerifyOtp = () => {
 
         setTimeout(() => {
           navigate("/login");
-        }, 1500);
+        }, 500);
       }
 
       // auto clear message
-      setTimeout(() => setResponseMessage(null), 3000);
+      setTimeout(() => setResponseMessage(null), 500);
     } catch (err) {
       console.error(err);
 
@@ -113,7 +113,7 @@ const VerifyOtp = () => {
         message: "Something went wrong. Try again.",
       });
 
-      setTimeout(() => setResponseMessage(null), 3000);
+      setTimeout(() => setResponseMessage(null), 500);
     } finally {
       setIsSubmitting(false);
     }
@@ -132,7 +132,7 @@ const VerifyOtp = () => {
 
       {/* OTP Card */}
       <div className="max-w-md space-y-5">
-        <div className="border-x-divider from-x-surface to-x-bg rounded-2xl border bg-gradient-to-b p-5">
+        <div className="border-x-divider from-x-surface to-x-bg rounded-2xl border bg-linear-to-b p-5">
           <p className="text-x-text-sec text-sm leading-6">
             We sent a 6-digit security code to your email. Please enter the code
             below to verify your account.

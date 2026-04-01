@@ -30,8 +30,7 @@ const Registration = () => {
       [name]: value,
     }));
 
-    // clear global error
-    setSubmitMessage("");
+    setSubmitMessage(""); // clear global error
 
     // 🔥 field-level validation
     const fieldSchema = registerSchema.shape[name];
@@ -68,15 +67,14 @@ const Registration = () => {
       const response = await fetch("http://localhost:3000/api/auth/register", {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.data),
       });
 
       const data = await response.json();
 
-      if (!data.success) {
+      // ✅ Fix: use `status` instead of `success`
+      if (!data.status) {
         setSubmitMessage(
           data.message || "Registration failed. Please try again.",
         );
@@ -95,7 +93,6 @@ const Registration = () => {
       navigate("/registration/verify-email", { replace: true });
     } catch (error) {
       console.log(error);
-
       setSubmitMessage(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);
@@ -119,7 +116,6 @@ const Registration = () => {
           Create your account
         </h1>
 
-        {/* ✅ FORM wrapper */}
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Social Buttons */}
           <button
@@ -148,6 +144,10 @@ const Registration = () => {
             <input
               type="text"
               name="fullName"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
               value={formData.fullName}
               onChange={handleInputChange}
               placeholder="Name"
@@ -161,6 +161,10 @@ const Registration = () => {
             <input
               type="email"
               name="email"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
               value={formData.email}
               onChange={handleInputChange}
               placeholder="Email"
@@ -174,6 +178,10 @@ const Registration = () => {
             <input
               type="password"
               name="password"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Password"
