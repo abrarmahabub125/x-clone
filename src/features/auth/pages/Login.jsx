@@ -1,8 +1,9 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import XLogo from "../../../shared/assets/logo/x-logo.svg";
 import { useState } from "react";
 import Spinner from "../../../shared/loaders/Spinner";
 import { loginSchema } from "../../../shared/validations/loginSchema.js";
+import { useAuth } from "../hooks/useAuth";
 
 const inputClassName =
   "border-x-divider text-x-text placeholder:text-x-text-sec focus:border-x-blue w-full rounded-md border bg-transparent px-3 py-4 text-base outline-none transition";
@@ -22,6 +23,9 @@ const LoginPage = () => {
 
   const [submitMessage, setSubmitMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const navigate = useNavigate();
+  const { refetchUser } = useAuth();
 
   // ✅ Check form validity
   const isFormValid =
@@ -72,7 +76,7 @@ const LoginPage = () => {
         password: fieldErrors.password?.[0] || "",
       });
 
-      return; // ❌ block submit
+      return; // block submit
     }
 
     try {
@@ -95,9 +99,10 @@ const LoginPage = () => {
         setFormData({ email: "", password: "" });
         setErrors({ email: "", password: "" });
 
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 1000);
+        // Refetch user data after successful login
+        await refetchUser();
+
+        navigate("/");
       } else {
         setSubmitMessage(data.message || "Login failed. Try again.");
         setTimeout(() => setSubmitMessage(""), 3000);
