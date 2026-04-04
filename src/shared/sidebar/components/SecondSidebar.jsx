@@ -10,7 +10,7 @@ const SecondSidebar = () => {
   return (
     <div className="flex h-full max-h-screen w-fit flex-col">
       {!location.pathname.startsWith("/explore") && (
-        <div className="py-2">
+        <div className="bg-x-bg sticky top-0 z-10 py-2">
           <SearchBar />
         </div>
       )}

@@ -1,50 +1,44 @@
-import { BadgeCheck, MoreHorizontal } from "lucide-react";
+import { Link } from "react-router";
 
 const FollowSuggestionCard = ({
-  avatar,
-  name,
-  handle,
+  userId,
+  fullName,
+  profilePic,
+  username,
   bio,
-  followers,
-  verified = false,
-  badge,
-  compact = false,
 }) => {
+  const avatar =
+    profilePic ||
+    "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg";
+
   return (
-    <article className="border-x-divider flex items-start gap-3 border-b px-4 py-4 transition-colors duration-200 hover:bg-x-surface/40">
-      <div className={`${compact ? "size-10" : "size-12"} shrink-0 overflow-hidden rounded-full`}>
+    <article className="border-x-divider hover:bg-x-surface/40 flex items-start gap-3 border-b px-4 py-4 transition-colors duration-200">
+      <div className={`size-11 shrink-0 overflow-hidden rounded-full`}>
         <img
           className="h-full w-full object-cover object-center"
           src={avatar}
-          alt={`${name} avatar`}
+          alt={`${fullName} avatar`}
         />
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-x-1 gap-y-1">
-              <span className="truncate text-[15px] font-bold text-x-text hover:underline">
-                {name}
-              </span>
-              {verified && <BadgeCheck className="size-4 fill-x-blue text-x-bg" />}
+            <div className="flex flex-col justify-start gap-y-0.5">
+              <Link to={`/profile/${userId}`}>
+                <span className="text-x-text truncate text-[15px] font-bold hover:underline">
+                  {fullName}
+                </span>
+              </Link>
+              {username && (
+                <p className="text-x-text-sec text-sm">@{username}</p>
+              )}
             </div>
-            <p className="text-x-text-sec text-sm">@{handle}</p>
-            {badge && (
-              <p className="text-x-text-sec mt-1 text-xs font-medium uppercase tracking-wide">
-                {badge}
-              </p>
-            )}
           </div>
-
-          <button className="hover:bg-x-surface -mr-2 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
-            <MoreHorizontal className="size-4 text-x-text-sec" />
-          </button>
         </div>
 
         <div className="mt-2 space-y-2">
           <p className="text-x-text text-[15px] leading-6">{bio}</p>
-          <p className="text-x-text-sec text-sm">{followers} Followers</p>
         </div>
       </div>
 

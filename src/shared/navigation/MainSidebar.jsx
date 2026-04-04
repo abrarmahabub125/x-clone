@@ -204,7 +204,7 @@ const MainSidebar = () => {
                       <div className="h-full pr-6 pl-1">
                         <span className="text-sm whitespace-nowrap sm:text-base">
                           Log out{" "}
-                          {user.username ? `@${user.username}` : user.email}
+                          {user.username ? `@${user.username}` : user.fullName}
                         </span>
                       </div>
                     </div>

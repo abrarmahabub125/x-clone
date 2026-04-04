@@ -1,46 +1,39 @@
-import MyPhoto from "../../../shared/assets/logo/my-photo.jpg";
+import { useState } from "react";
 import FollowSectionHeader from "./FollowSectionHeader";
 import FollowSuggestionCard from "./FollowSuggestionCard";
-
-const suggestions = [
-  {
-    id: 1,
-    name: "LeBron James",
-    handle: "kingjames",
-    bio: "Still chasing greatness. Athlete. Storyteller. Investor. Family first.",
-    followers: "52.1M",
-    verified: true,
-    avatar: MyPhoto,
-  },
-  {
-    id: 2,
-    name: "Sara UI",
-    handle: "sara_designs",
-    bio: "Designing interfaces that feel lighter, faster, and more human. Product design threads every week.",
-    followers: "84.5K",
-    verified: true,
-    avatar: MyPhoto,
-  },
-  {
-    id: 3,
-    name: "React Bangladesh",
-    handle: "react_bd",
-    bio: "Community account sharing React resources, frontend jobs, and real-world architecture ideas.",
-    followers: "18.2K",
-    avatar: MyPhoto,
-  },
-  {
-    id: 4,
-    name: "Product Hunt Daily",
-    handle: "ph_daily",
-    bio: "Surfacing the most interesting launches, design experiments, and startup tools every day.",
-    followers: "209K",
-    verified: true,
-    avatar: MyPhoto,
-  },
-];
+import Spinner from "../../../shared/loaders/Spinner";
+import FetchError from "../../../shared/ui/FetchError";
 
 const FollowHome = () => {
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Simulate fetching suggestions from an API
+  useState(() => {
+    fetch("http://localhost:3000/api/users/connect", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies for authentication
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setSuggestions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching suggestions:", error);
+        setError("Failed to load suggestions. Please try again.");
+        setLoading(false);
+      });
+  }, []);
+
+  if (error) {
+    return <FetchError message={error} />;
+  }
+
   return (
     <div>
       <FollowSectionHeader
@@ -49,9 +42,15 @@ const FollowHome = () => {
       />
 
       <div>
-        {suggestions.map((profile) => (
-          <FollowSuggestionCard key={profile.id} {...profile} />
-        ))}
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Spinner />
+          </div>
+        ) : (
+          suggestions.map((profile) => (
+            <FollowSuggestionCard key={profile.id} {...profile} />
+          ))
+        )}
       </div>
     </div>
   );

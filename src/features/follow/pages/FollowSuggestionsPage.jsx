@@ -11,7 +11,7 @@ const FollowSuggestionsPage = () => {
     <div>
       <FollowHeader />
 
-      <div className="min-h-screen">
+      <div className="min-h-fit">
         <div className="border-x-divider grid grid-cols-2 grid-rows-1 border-b">
           {tabs.map((tab) => (
             <NavLink
