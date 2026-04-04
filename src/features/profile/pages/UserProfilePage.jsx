@@ -1,16 +1,10 @@
 import { Suspense } from "react";
-import {
-  CalendarDays,
-  Link2,
-  MapPin,
-  MoreHorizontal,
-} from "lucide-react";
-import { Outlet, useParams } from "react-router";
+import { CalendarDays, MapPin, MoreHorizontal } from "lucide-react";
+import { Outlet, useLoaderData, useParams } from "react-router";
 import Spinner from "../../../shared/loaders/Spinner";
 import BackButton from "../../../shared/ui/BackButton";
 import PageHeader from "../../../shared/ui/PageHeader";
 import TabItem from "../../../shared/ui/TabItem";
-import { profileInfo } from "../data/profileData";
 
 const profileTabs = [
   { label: "Posts", path: "" },
@@ -23,6 +17,8 @@ const UserProfilePage = () => {
   const { userId } = useParams();
   const profileBasePath = `/profile/${userId}`;
 
+  const profileData = useLoaderData();
+
   return (
     <div className="min-h-screen">
       <PageHeader className="px-3 py-2">
@@ -30,33 +26,37 @@ const UserProfilePage = () => {
           <BackButton />
           <div>
             <h1 className="text-x-text text-lg font-semibold sm:text-xl">
-              {profileInfo.name}
+              {profileData.fullName}
             </h1>
             <p className="text-x-text-sec text-xs sm:text-sm">
-              {profileInfo.totalPosts} posts
+              {profileData.totalPost} posts
             </p>
           </div>
         </div>
       </PageHeader>
 
       <section>
-        <div className={`h-48 w-full sm:h-56 ${profileInfo.bannerClass}`} />
+        <div className="h-48 w-full bg-[linear-gradient(197deg,rgba(63,135,251,0.99)_0%,rgba(70,200,252,1)_100%)] sm:h-56" />
 
         <div className="px-4 pb-4">
           <div className="flex items-end justify-between gap-4">
-            <div className="-mt-16 size-32 overflow-hidden rounded-full border-4 border-x-bg bg-x-bg sm:-mt-20 sm:size-36">
+            <div className="border-x-bg bg-x-bg -mt-16 size-32 overflow-hidden rounded-full border-4 sm:-mt-20 sm:size-36">
               <img
                 className="h-full w-full object-cover object-center"
-                src={profileInfo.avatar}
-                alt={`${profileInfo.name} profile`}
+                src={
+                  profileData.profilePic
+                    ? profileData.profilePic
+                    : "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+                }
+                alt={`${profileData.fullName} profile`}
               />
             </div>
 
             <div className="mt-3 flex items-center gap-2">
-              <button className="hover:bg-x-surface inline-flex size-9 items-center justify-center rounded-full border border-x-divider transition-colors duration-200">
+              <button className="hover:bg-x-surface border-x-divider inline-flex size-9 items-center justify-center rounded-full border transition-colors duration-200">
                 <MoreHorizontal className="size-5" />
               </button>
-              <button className="rounded-full border border-x-divider px-4 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-x-surface">
+              <button className="border-x-divider hover:bg-x-surface rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200">
                 Edit profile
               </button>
             </div>
@@ -65,47 +65,53 @@ const UserProfilePage = () => {
           <div className="mt-3">
             <div className="flex items-center gap-1.5">
               <h2 className="text-x-text text-xl font-extrabold sm:text-2xl">
-                {profileInfo.name}
+                {profileData.fullName}
               </h2>
             </div>
-            <p className="text-x-text-sec text-[15px]">
-              @{profileInfo.handle}_{userId}
-            </p>
+            {profileData.username && (
+              <p className="text-x-text-sec text-[15px]">
+                {profileData.username}
+              </p>
+            )}
           </div>
 
           <div className="mt-3 max-w-2xl space-y-3">
-            <p className="text-x-text text-[15px] leading-6">{profileInfo.bio}</p>
+            {profileData.bio && (
+              <p className="text-x-text text-[15px] leading-6">
+                {profileData.bio}
+              </p>
+            )}
 
             <div className="text-x-text-sec flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-              <div className="flex items-center gap-1.5">
-                <MapPin className="size-4" />
-                <span>{profileInfo.location}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Link2 className="size-4" />
-                <a
-                  href={profileInfo.website}
-                  className="text-x-blue hover:underline"
-                >
-                  {profileInfo.websiteLabel}
-                </a>
-              </div>
+              {profileData.location && (
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="size-4" />
+                  <span>{profileData.location}</span>
+                </div>
+              )}
+
               <div className="flex items-center gap-1.5">
                 <CalendarDays className="size-4" />
-                <span>{profileInfo.joined}</span>
+                <span>
+                  {new Date(profileData.joinedAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
               </div>
             </div>
 
             <div className="flex items-center gap-5 text-sm">
               <div className="flex items-center gap-1.5">
                 <span className="text-x-text font-semibold">
-                  {profileInfo.following}
+                  {profileData.following.length}
                 </span>
                 <span className="text-x-text-sec">Following</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-x-text font-semibold">
-                  {profileInfo.followers}
+                  {profileData.followers.length}
                 </span>
                 <span className="text-x-text-sec">Followers</span>
               </div>
@@ -115,12 +121,14 @@ const UserProfilePage = () => {
       </section>
 
       <section className="border-x-divider border-t">
-        <div className="grid w-full grid-cols-4 border-b border-x-divider">
+        <div className="border-x-divider grid w-full grid-cols-4 border-b">
           {profileTabs.map((tab) => (
             <TabItem
               key={tab.label}
               label={tab.label}
-              path={tab.path ? `${profileBasePath}/${tab.path}` : profileBasePath}
+              path={
+                tab.path ? `${profileBasePath}/${tab.path}` : profileBasePath
+              }
               end={!tab.path}
             />
           ))}

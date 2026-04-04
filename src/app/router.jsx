@@ -3,6 +3,7 @@ import { lazy } from "react";
 import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
 import VerifyOtp from "../features/auth/pages/VerifyOtp";
 import LoginPage from "../features/auth/pages/Login";
+import Logout from "../features/auth/pages/Logout";
 
 const App = lazy(() => import("./App"));
 const RootLayout = lazy(() => import("./layouts/RootLayout"));
@@ -82,6 +83,10 @@ const router = createBrowserRouter([
       { path: "login", Component: LoginPage },
       { path: "registration/verify-email", Component: VerifyOtp },
       {
+        path: "logout",
+        Component: Logout,
+      },
+      {
         element: <ProtectedRoute />,
         children: [
           {
@@ -124,6 +129,26 @@ const router = createBrowserRouter([
               {
                 path: "profile/:userId",
                 Component: UserProfilePage,
+                loader: async ({ params }) => {
+                  const result = await fetch(
+                    `http://localhost:3000/api/users/${params.userId}`,
+                    {
+                      method: "GET",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      credentials: "include",
+                    },
+                  );
+                  if (!result.ok) {
+                    throw new Response("Failed to fetch user profile", {
+                      status: result.status,
+                    });
+                  }
+
+                  const data = await result.json();
+                  return data;
+                },
                 children: [
                   { index: true, Component: ProfilePostsPage },
                   { path: "replies", Component: ProfileRepliesPage },

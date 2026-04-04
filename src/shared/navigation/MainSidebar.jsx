@@ -21,10 +21,12 @@ import MyPhoto from "../assets/logo/my-photo.jpg";
 import TweetIcon from "../assets/tweet-icon.jpg";
 import MainLink from "./components/MainLink";
 import MorePopUp from "./components/MorePopUp";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 
 const MainSidebar = () => {
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [isAccountPopUpOpen, setIsAccountPopUpOpen] = useState(false);
+  const { user } = useAuth().user;
 
   const location = useLocation();
   const composeHref = useMemo(() => {
@@ -72,7 +74,7 @@ const MainSidebar = () => {
             label="Bookmarks"
           />
           <MainLink
-            path="/profile/123"
+            path={`/profile/${user.id}`}
             icon={<User2Icon />}
             label="Profile"
           />
@@ -169,7 +171,10 @@ const MainSidebar = () => {
               </span>
             </div>
           </Link>
-          <Link to={composeHref} className="bg-x-bgOpposite rounded-full lg:hidden">
+          <Link
+            to={composeHref}
+            className="bg-x-bgOpposite rounded-full lg:hidden"
+          >
             <div className="bg-x-bgOpposite mt-8 flex size-12 w-full items-center justify-center overflow-hidden rounded-full transition-opacity duration-200 hover:opacity-95">
               <img className="size-7 object-cover" src={TweetIcon} alt="icon" />
             </div>
@@ -198,7 +203,8 @@ const MainSidebar = () => {
                     <div className="flex items-center gap-1.5 rounded-full transition-colors duration-200">
                       <div className="h-full pr-6 pl-1">
                         <span className="text-sm whitespace-nowrap sm:text-base">
-                          Log out @abrar_mahabub
+                          Log out{" "}
+                          {user.username ? `@${user.username}` : user.email}
                         </span>
                       </div>
                     </div>
@@ -219,17 +225,23 @@ const MainSidebar = () => {
             <div className="size-10 rounded-full">
               <img
                 className="h-full w-full rounded-full object-cover"
-                src={MyPhoto}
+                src={
+                  user.profilePic
+                    ? user.profilePic
+                    : "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+                }
                 alt="user_profile_pic"
               />
             </div>
-            <div className="hidden flex-col justify-start lg:flex">
+            <div className="hidden flex-col justify-start text-left lg:flex">
               <span className="text-x-text cursor-pointer text-sm font-medium sm:text-base">
-                Abrar Mahabub
+                {user.fullName}
               </span>
-              <span className="text-x-text-sec cursor-pointer text-sm font-light sm:text-base">
-                @abrar_mahabub
-              </span>
+              {user.username && (
+                <span className="text-x-text-sec cursor-pointer text-xs font-light sm:text-base">
+                  {user.username}
+                </span>
+              )}
             </div>
           </div>
           <div className="hover:bg-x-surface hidden size-7 cursor-pointer items-center justify-center rounded-full p-1.5 transition-colors duration-200 lg:flex">
