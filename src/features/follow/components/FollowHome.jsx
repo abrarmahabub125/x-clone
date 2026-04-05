@@ -48,7 +48,7 @@ const FollowHome = () => {
           </div>
         ) : (
           suggestions.map((profile) => (
-            <FollowSuggestionCard key={profile.id} {...profile} />
+            <FollowSuggestionCard key={profile._id} {...profile} />
           ))
         )}
       </div>

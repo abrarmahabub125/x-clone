@@ -78,17 +78,6 @@ const MainSidebar = () => {
             icon={<User2Icon />}
             label="Profile"
           />
-          <MainLink path="/list" icon={<ListTodoIcon />} label="Lists" />
-          <MainLink
-            path="/communities"
-            icon={<Users2Icon />}
-            label="Communities"
-          />
-          <MainLink
-            path="/ads-center"
-            icon={<SquareArrowOutUpRightIcon />}
-            label="Ads"
-          />
 
           <button
             onClick={() => {
@@ -102,20 +91,6 @@ const MainSidebar = () => {
                 {isPopUpOpen && (
                   <MorePopUp>
                     <div>
-                      <NavLink to="/create-space">
-                        <div className="px-1 py-2">
-                          <div className="flex items-center gap-1.5 rounded-full transition-colors duration-200">
-                            <div className="flex size-8 items-center justify-center rounded-full">
-                              <MicIcon className="size-5" />
-                            </div>
-                            <div className="h-full pr-6 pl-1">
-                              <span className="text-base whitespace-nowrap sm:text-lg">
-                                Create your Space
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </NavLink>
                       <NavLink to="/business">
                         <div className="px-1 py-2">
                           <div className="flex items-center gap-1.5 rounded-full transition-colors duration-200">

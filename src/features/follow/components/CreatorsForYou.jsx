@@ -47,7 +47,7 @@ const CreatorsForYou = () => {
         </div>
       ) : (
         creators.map((creator) => (
-          <FollowSuggestionCard key={creator.id} {...creator} />
+          <FollowSuggestionCard key={creator._id} {...creator} />
         ))
       )}
     </div>

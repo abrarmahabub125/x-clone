@@ -92,6 +92,7 @@ input:-internal-autofill-selected {
 @layer base {
   html {
     @apply bg-x-bg text-x-text;
+    scrollbar-gutter: stable both-edges;
   }
 
   body {

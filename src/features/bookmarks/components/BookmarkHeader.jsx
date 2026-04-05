@@ -10,7 +10,6 @@ const BookmarkHeader = () => {
           <h2 className="text-x-text text-lg font-semibold sm:text-xl">
             Bookmarks
           </h2>
-          <p className="text-x-text-sec text-xs sm:text-sm">@abrar_mahabub</p>
         </div>
       </div>
     </PageHeader>

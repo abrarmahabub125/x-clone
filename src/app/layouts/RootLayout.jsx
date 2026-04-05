@@ -10,7 +10,8 @@ const RootLayout = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const isComposeModal =
-    location.pathname !== "/compose/post" && searchParams.get("compose") === "1";
+    location.pathname !== "/compose/post" &&
+    searchParams.get("compose") === "1";
 
   const handleCloseComposeModal = () => {
     const nextSearchParams = new URLSearchParams(searchParams);

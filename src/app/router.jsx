@@ -4,6 +4,7 @@ import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
 import VerifyOtp from "../features/auth/pages/VerifyOtp";
 import LoginPage from "../features/auth/pages/Login";
 import Logout from "../features/auth/pages/Logout";
+import NotFoundPage from "../shared/ui/NotFoundPage";
 
 const App = lazy(() => import("./App"));
 const RootLayout = lazy(() => import("./layouts/RootLayout"));
@@ -33,20 +34,13 @@ const ProfileMediaPage = lazy(
 const ProfileLikesPage = lazy(
   () => import("../features/profile/pages/ProfileLikesPage"),
 );
-const ListPage = lazy(() => import("../features/lists/pages/ListPage"));
-const CommunitiesPage = lazy(
-  () => import("../features/communities/pages/CommunitiesPage"),
-);
-const AdsCenter = lazy(() => import("../features/ads/pages/AdsCenter"));
 const SettingsAndPrivacyPage = lazy(
   () => import("../features/settings/pages/SettingsAndPrivacyPage"),
 );
 const BusinessPage = lazy(
   () => import("../features/business/pages/BusinessPage"),
 );
-const CreateYourSpace = lazy(
-  () => import("../features/spaces/pages/CreateYourSpace"),
-);
+
 const CreatePostModal = lazy(
   () => import("../features/post/pages/CreatePostModal"),
 );
@@ -156,10 +150,6 @@ const router = createBrowserRouter([
                   { path: "likes", Component: ProfileLikesPage },
                 ],
               },
-              { path: "list", Component: ListPage },
-              { path: "communities", Component: CommunitiesPage },
-              { path: "ads-center", Component: AdsCenter },
-              { path: "create-space", Component: CreateYourSpace },
               { path: "settings", Component: SettingsAndPrivacyPage },
               { path: "business", Component: BusinessPage },
             ],
@@ -167,6 +157,10 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "*",
+    Component: NotFoundPage,
   },
 ]);
 
