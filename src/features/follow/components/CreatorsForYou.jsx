@@ -36,19 +36,22 @@ const CreatorsForYou = () => {
 
   return (
     <div>
-      <FollowSectionHeader
-        title="Creators for you"
-        subtitle="Popular creators in design, frontend, and product conversations"
-      />
-
       {loading ? (
         <div className="flex justify-center py-12">
           <Spinner />
         </div>
       ) : (
-        creators.map((creator) => (
-          <FollowSuggestionCard key={creator._id} {...creator} />
-        ))
+        <>
+          <FollowSectionHeader
+            title="Creators for you"
+            subtitle="Popular creators in design, frontend, and product conversations"
+          />
+          <div>
+            {creators.map((creator) => (
+              <FollowSuggestionCard key={creator._id} {...creator} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

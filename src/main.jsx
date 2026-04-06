@@ -6,6 +6,6 @@ import AuthProvider from "./features/auth/providers/AuthProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
-    <RouterProvider router={router} />,
+    <RouterProvider router={router} />
   </AuthProvider>,
 );

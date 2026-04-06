@@ -36,7 +36,7 @@ const UserProfilePage = () => {
       </PageHeader>
 
       <section>
-        <div className="h-48 w-full bg-[linear-gradient(197deg,rgba(63,135,251,0.99)_0%,rgba(70,200,252,1)_100%)] sm:h-56" />
+        <div className="h-48 w-full bg-gradient-to-r from-[#0e7490] via-[#3b82f6] to-[#4f46e5] sm:h-56"></div>
 
         <div className="px-4 pb-4">
           <div className="flex items-end justify-between gap-4">
@@ -135,9 +135,7 @@ const UserProfilePage = () => {
         </div>
 
         <div>
-          <Suspense fallback={<Spinner />}>
-            <Outlet />
-          </Suspense>
+          <Outlet />
         </div>
       </section>
     </div>

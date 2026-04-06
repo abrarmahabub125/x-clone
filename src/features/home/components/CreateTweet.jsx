@@ -9,9 +9,19 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 import MyImage from "../../../shared/assets/logo/my-photo.jpg";
+import { useState } from "react";
+import { useAuth } from "../../auth/hooks/useAuth";
+import Spinner from "../../../shared/loaders/Spinner";
+import { useNavigate } from "react-router";
 
 const CreateTweet = () => {
   const textareaRef = useRef(null);
+  const [tweet, setTweet] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const { user } = useAuth().user;
+  const navigate = useNavigate();
 
   const MAX_HEIGHT = 200;
 
@@ -29,8 +39,62 @@ const CreateTweet = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+
+    if (tweet.trim() === "") {
+      setError("Tweet content cannot be empty");
+      return;
+    }
+
+    const tweetData = {
+      userId: user.id,
+      content: tweet.trim().toString(),
+      media: "",
+      likesCount: 0,
+      commentsCount: 0,
+      viewsCount: 0,
+      retweetsCount: 0,
+    };
+
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:3000/api/tweets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(tweetData),
+      });
+
+      if (!response.ok) {
+        setError("Failed to create tweet");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Tweet created successfully:", data);
+
+      if (data.status) {
+        navigate("/");
+      }
+
+      // Clear the textarea after successful submission
+      setTweet("");
+    } catch (err) {
+      setError(err.message || "An error occurred while creating the tweet");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form className="border-x-divider h-auto border-b px-4">
+    <form
+      onSubmit={handleSubmit}
+      className="border-x-divider h-auto border-b px-4"
+    >
       <div className="flex flex-1 items-start pt-4">
         <div>
           <div className="size-10 overflow-hidden rounded-full">
@@ -48,6 +112,8 @@ const CreateTweet = () => {
               <textarea
                 ref={textareaRef}
                 onInput={handleInput}
+                onChange={(e) => setTweet(e.target.value)}
+                value={tweet}
                 className="text-x-bgOpposite custom-scrollbar w-full resize-none px-2 py-2 text-lg font-light outline-0"
                 name="tweet"
                 placeholder="What's happening?"
@@ -63,6 +129,12 @@ const CreateTweet = () => {
                 </span>
               </div>
             </div>
+          </div>
+
+          <div>
+            {error && (
+              <p className="mb-2 py-1.5 text-sm text-red-600">{error}</p>
+            )}
           </div>
 
           <div className="border-x-divider flex w-full items-center justify-between border-t py-2">
@@ -100,8 +172,11 @@ const CreateTweet = () => {
               </button>
             </div>
             <div>
-              <button className="bg-x-bgOpposite text-x-textOpposite cursor-pointer rounded-full px-4 py-1 font-medium outline-0 transition-all duration-200 active:scale-95">
-                <span>Post</span>
+              <button
+                type="submit"
+                className="bg-x-bgOpposite text-x-textOpposite cursor-pointer rounded-full px-4 py-1 font-medium outline-0 transition-all duration-200 active:scale-95"
+              >
+                {loading ? <Spinner /> : <span>Post</span>}
               </button>
             </div>
           </div>

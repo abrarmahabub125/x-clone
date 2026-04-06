@@ -8,30 +8,34 @@ import {
   Repeat2,
   Share,
 } from "lucide-react";
+import { Link } from "react-router";
 
 const actionBaseClass =
   "group inline-flex items-center gap-1.5 rounded-full text-x-text-sec transition-colors duration-200";
 
 const TweetCard = ({
-  author,
-  handle,
-  time,
+  userId,
   content,
-  avatar,
-  verified = false,
-  image,
-  replies = 0,
-  reposts = 0,
-  likes = 0,
-  views = "0",
+  media,
+  likesCount,
+  viewsCount,
+  retweetsCount,
+  createdAt,
+  user,
 }) => {
+  const { fullName, username, profilePic } = user;
+
   return (
     <article className="border-x-divider hover:bg-x-surface/40 flex gap-3 border-b px-4 py-3 transition-colors duration-200">
       <div className="size-10 shrink-0 overflow-hidden rounded-full">
         <img
           className="h-full w-full object-cover object-center"
-          src={avatar}
-          alt={`${author} avatar`}
+          src={
+            profilePic
+              ? profilePic
+              : "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+          }
+          alt={`${fullName} avatar`}
         />
       </div>
 
@@ -39,15 +43,19 @@ const TweetCard = ({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[15px] leading-5">
-              <span className="text-x-text truncate font-semibold">
-                {author}
-              </span>
-              {verified && (
-                <BadgeCheck className="fill-x-blue text-x-bg size-4" />
+              <Link to={`/profile/${userId}`}>
+                <span className="text-x-text truncate font-semibold">
+                  {fullName}
+                </span>
+              </Link>
+              <BadgeCheck className="fill-x-blue text-x-bg size-4" />
+              {username && (
+                <span className="text-x-text-sec truncate">@{username}</span>
               )}
-              <span className="text-x-text-sec truncate">@{handle}</span>
               <span className="text-x-text-sec">,</span>
-              <span className="text-x-text-sec">{time}</span>
+              <span className="text-x-text-sec">
+                {new Date(createdAt).toLocaleTimeString()}
+              </span>
             </div>
           </div>
 
@@ -61,55 +69,43 @@ const TweetCard = ({
             {content}
           </p>
 
-          {image && (
+          {media && (
             <div className="border-x-divider overflow-hidden rounded-2xl border">
               <img
                 className="h-auto max-h-[32rem] w-full object-cover object-center"
-                src={image}
+                src={media}
                 alt="tweet media"
               />
             </div>
           )}
         </div>
 
-        <div className="mt-3 grid grid-cols-5 gap-2 text-sm">
-          <button className={`${actionBaseClass} hover:text-x-blue`}>
-            <span className="group-hover:bg-x-blue/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
-              <MessageCircle className="size-4" />
-            </span>
-            <span>{replies}</span>
-          </button>
-
+        <div className="mt-3 grid grid-cols-4 gap-2 text-sm">
           <button className={`${actionBaseClass} hover:text-x-green`}>
             <span className="group-hover:bg-x-green/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
               <Repeat2 className="size-4" />
             </span>
-            <span>{reposts}</span>
+            <span>{retweetsCount}</span>
           </button>
 
           <button className={`${actionBaseClass} hover:text-x-red`}>
             <span className="group-hover:bg-x-red/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
               <Heart className="size-4" />
             </span>
-            <span>{likes}</span>
+            <span>{likesCount}</span>
           </button>
 
           <button className={`${actionBaseClass} hover:text-x-blue`}>
             <span className="group-hover:bg-x-blue/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
               <BarChart2 className="size-4" />
             </span>
-            <span>{views}</span>
+            <span>{viewsCount}</span>
           </button>
 
           <div className="text-x-text-sec flex items-center justify-end gap-1">
             <button className="hover:text-x-blue">
               <span className="hover:bg-x-blue/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
                 <Bookmark className="size-4" />
-              </span>
-            </button>
-            <button className="hover:text-x-blue">
-              <span className="hover:bg-x-blue/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
-                <Share className="size-4" />
               </span>
             </button>
           </div>

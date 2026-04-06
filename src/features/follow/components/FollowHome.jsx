@@ -36,22 +36,29 @@ const FollowHome = () => {
 
   return (
     <div>
-      <FollowSectionHeader
-        title="Suggested for you"
-        subtitle="Accounts you might want to follow based on product, design, and frontend interests"
-      />
-
-      <div>
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <Spinner />
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <Spinner />
+        </div>
+      ) : (
+        <>
+          <FollowSectionHeader
+            title="Suggested for you"
+            subtitle="Accounts you might want to follow based on product, design, and frontend interests"
+          />
+          <div>
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Spinner />
+              </div>
+            ) : (
+              suggestions.map((profile) => (
+                <FollowSuggestionCard key={profile._id} {...profile} />
+              ))
+            )}
           </div>
-        ) : (
-          suggestions.map((profile) => (
-            <FollowSuggestionCard key={profile._id} {...profile} />
-          ))
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };
