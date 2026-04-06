@@ -1,17 +1,34 @@
-import {
+﻿import {
   BadgeCheck,
   BarChart2,
   Bookmark,
   Heart,
-  MessageCircle,
   MoreHorizontal,
   Repeat2,
-  Share,
 } from "lucide-react";
 import { Link } from "react-router";
 
 const actionBaseClass =
   "group inline-flex items-center gap-1.5 rounded-full text-x-text-sec transition-colors duration-200";
+
+function formatTweetTimestamp(createdAt) {
+  if (!createdAt) {
+    return "";
+  }
+
+  const parsedDate = new Date(createdAt);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return createdAt;
+  }
+
+  return parsedDate.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
 
 const TweetCard = ({
   userId,
@@ -23,7 +40,13 @@ const TweetCard = ({
   createdAt,
   user,
 }) => {
-  const { fullName, username, profilePic } = user;
+  const {
+    fullName = "Unknown User",
+    username = "",
+    profilePic = "",
+  } = user ?? {};
+  const authorHref = userId ? `/profile/${userId}` : null;
+  const timestamp = formatTweetTimestamp(createdAt);
 
   return (
     <article className="border-x-divider hover:bg-x-surface/40 flex gap-3 border-b px-4 py-3 transition-colors duration-200">
@@ -43,19 +66,23 @@ const TweetCard = ({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[15px] leading-5">
-              <Link to={`/profile/${userId}`}>
+              {authorHref ? (
+                <Link to={authorHref}>
+                  <span className="text-x-text truncate font-semibold">
+                    {fullName}
+                  </span>
+                </Link>
+              ) : (
                 <span className="text-x-text truncate font-semibold">
                   {fullName}
                 </span>
-              </Link>
+              )}
               <BadgeCheck className="fill-x-blue text-x-bg size-4" />
               {username && (
                 <span className="text-x-text-sec truncate">@{username}</span>
               )}
-              <span className="text-x-text-sec">,</span>
-              <span className="text-x-text-sec">
-                {new Date(createdAt).toLocaleTimeString()}
-              </span>
+              {timestamp && <span className="text-x-text-sec">,</span>}
+              {timestamp && <span className="text-x-text-sec">{timestamp}</span>}
             </div>
           </div>
 

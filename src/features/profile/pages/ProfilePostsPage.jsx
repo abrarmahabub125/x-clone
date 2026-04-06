@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { fetcher } from "../../../../fetcher";
 import ProfileTimeline from "../components/ProfileTimeline";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
@@ -8,33 +9,25 @@ const ProfilePostsPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const { userId } = useParams();
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const userPosts = await fetch(
-          `http://localhost:3000/api/users/${userId}/posts`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          },
-        );
+        const response = await fetcher(`/api/users/${userId}/posts`, {
+          method: "GET",
+        });
 
-        const data = await userPosts.json();
-        setPosts(data.posts);
+        setPosts(response?.data ?? []);
         setError(null);
-      } catch (e) {
-        setError(e.message || "Failed to load posts. Please try again.");
+      } catch (fetchError) {
+        setError(fetchError.message || "Failed to load posts. Please try again.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchPosts();
   }, [userId]);
 
@@ -58,3 +51,4 @@ const ProfilePostsPage = () => {
 };
 
 export default ProfilePostsPage;
+

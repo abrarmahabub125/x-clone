@@ -1,7 +1,8 @@
-import WhoToFollowCard from "./WhoToFollowCard";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { useEffect, useState } from "react";
+import { fetcher } from "../../../../fetcher";
 import Spinner from "../../loaders/Spinner";
+import WhoToFollowCard from "./WhoToFollowCard";
 
 const WhoToFollow = () => {
   const [whoToFollow, setWhoToFollow] = useState([]);
@@ -10,24 +11,19 @@ const WhoToFollow = () => {
   useEffect(() => {
     const fetchWhoToFollow = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/users/who-to-follow",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          },
-        );
-        const data = await response.json();
-        setWhoToFollow(data);
+        const response = await fetcher("/api/users/who-to-follow", {
+          method: "GET",
+        });
+
+        setWhoToFollow(response?.data ?? []);
       } catch (error) {
         console.error("Error fetching who to follow:", error);
+        setWhoToFollow([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchWhoToFollow();
   }, []);
 
@@ -71,3 +67,4 @@ const WhoToFollow = () => {
 };
 
 export default WhoToFollow;
+

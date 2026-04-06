@@ -1,9 +1,10 @@
-import { createBrowserRouter } from "react-router";
+﻿import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
 import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
 import VerifyOtp from "../features/auth/pages/VerifyOtp";
 import LoginPage from "../features/auth/pages/Login";
 import Logout from "../features/auth/pages/Logout";
+import { fetcher } from "../../fetcher";
 import NotFoundPage from "../shared/ui/NotFoundPage";
 
 const App = lazy(() => import("./App"));
@@ -124,24 +125,9 @@ const router = createBrowserRouter([
                 path: "profile/:userId",
                 Component: UserProfilePage,
                 loader: async ({ params }) => {
-                  const result = await fetch(
-                    `http://localhost:3000/api/users/${params.userId}`,
-                    {
-                      method: "GET",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      credentials: "include",
-                    },
-                  );
-                  if (!result.ok) {
-                    throw new Response("Failed to fetch user profile", {
-                      status: result.status,
-                    });
-                  }
-
-                  const data = await result.json();
-                  return data;
+                  return fetcher(`/api/users/${params.userId}`, {
+                    method: "GET",
+                  });
                 },
                 children: [
                   { index: true, Component: ProfilePostsPage },
@@ -165,3 +151,5 @@ const router = createBrowserRouter([
 ]);
 
 export { router };
+
+

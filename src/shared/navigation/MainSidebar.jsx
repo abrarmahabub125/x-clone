@@ -1,34 +1,29 @@
-import Logo from "../assets/logo/x-logo.svg";
-import { Link, NavLink, useLocation } from "react-router";
-import {
-  Home,
-  Search,
+﻿import {
   Bell,
   BookmarkIcon,
-  User2Icon,
-  UserPlus2Icon,
-  Users2Icon,
-  ListTodoIcon,
-  SquareArrowOutUpRightIcon,
   CircleEllipsisIcon,
   EllipsisIcon,
+  Home,
+  Search,
   Settings,
-  MicIcon,
+  User2Icon,
+  UserPlus2Icon,
   ZapIcon,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import MyPhoto from "../assets/logo/my-photo.jpg";
+import { Link, NavLink, useLocation } from "react-router";
+import Logo from "../assets/logo/x-logo.svg";
 import TweetIcon from "../assets/tweet-icon.jpg";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 import MainLink from "./components/MainLink";
 import MorePopUp from "./components/MorePopUp";
-import { useAuth } from "../../features/auth/hooks/useAuth";
 
 const MainSidebar = () => {
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [isAccountPopUpOpen, setIsAccountPopUpOpen] = useState(false);
-  const { user } = useAuth().user;
-
+  const { user } = useAuth();
   const location = useLocation();
+
   const composeHref = useMemo(() => {
     const params = new URLSearchParams(location.search);
     params.set("compose", "1");
@@ -38,6 +33,10 @@ const MainSidebar = () => {
       search: `?${params.toString()}`,
     };
   }, [location.pathname, location.search]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="hidden h-full w-full flex-col justify-between gap-y-px md:flex">
@@ -74,7 +73,7 @@ const MainSidebar = () => {
             label="Bookmarks"
           />
           <MainLink
-            path={`/profile/${user.id}`}
+            path={user.id ? `/profile/${user.id}` : "/"}
             icon={<User2Icon />}
             label="Profile"
           />
@@ -178,8 +177,7 @@ const MainSidebar = () => {
                     <div className="flex items-center gap-1.5 rounded-full transition-colors duration-200">
                       <div className="h-full pr-6 pl-1">
                         <span className="text-sm whitespace-nowrap sm:text-base">
-                          Log out{" "}
-                          {user.username ? `@${user.username}` : user.fullName}
+                          Log out {user.username ? `@${user.username}` : user.fullName}
                         </span>
                       </div>
                     </div>
@@ -214,7 +212,7 @@ const MainSidebar = () => {
               </span>
               {user.username && (
                 <span className="text-x-text-sec cursor-pointer text-xs font-light sm:text-base">
-                  {user.username}
+                  @{user.username}
                 </span>
               )}
             </div>

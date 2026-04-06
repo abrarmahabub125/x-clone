@@ -1,6 +1,7 @@
+﻿import { useEffect, useState } from "react";
+import { fetcher } from "../../../../fetcher";
 import FollowSectionHeader from "./FollowSectionHeader";
 import FollowSuggestionCard from "./FollowSuggestionCard";
-import { useState } from "react";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 
@@ -9,25 +10,24 @@ const CreatorsForYou = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Simulate fetching suggestions from an API
-  useState(() => {
-    fetch("http://localhost:3000/api/users/creators", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies for authentication
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setCreators(data);
+  useEffect(() => {
+    const fetchCreators = async () => {
+      try {
+        const response = await fetcher("/api/users/creators", {
+          method: "GET",
+        });
+
+        setCreators(response?.data ?? []);
+        setError(null);
+      } catch (fetchError) {
+        console.error("Error fetching suggestions:", fetchError);
+        setError(fetchError.message || "Failed to load creators. Please try again.");
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching suggestions:", error);
-        setError("Failed to load creators. Please try again.");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchCreators();
   }, []);
 
   if (error) {
@@ -47,9 +47,20 @@ const CreatorsForYou = () => {
             subtitle="Popular creators in design, frontend, and product conversations"
           />
           <div>
-            {creators.map((creator) => (
-              <FollowSuggestionCard key={creator._id} {...creator} />
-            ))}
+            {creators.length > 0 ? (
+              creators.map((creator) => (
+                <FollowSuggestionCard
+                  key={creator.userId ?? creator._id}
+                  {...creator}
+                />
+              ))
+            ) : (
+              <div className="px-4 py-10 text-center">
+                <p className="text-x-text-sec text-sm">
+                  No creator suggestions are available right now.
+                </p>
+              </div>
+            )}
           </div>
         </>
       )}
@@ -58,3 +69,4 @@ const CreatorsForYou = () => {
 };
 
 export default CreatorsForYou;
+

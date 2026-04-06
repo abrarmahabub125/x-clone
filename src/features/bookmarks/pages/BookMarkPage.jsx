@@ -1,35 +1,44 @@
+﻿import { useEffect, useState } from "react";
+import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 import { useAuth } from "../../auth/hooks/useAuth";
 import BookmarkHeader from "../components/BookmarkHeader";
-import { useEffect, useState } from "react";
 
 const BookMarkPage = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const { user } = useAuth().user;
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchBookmarks = async () => {
+      if (!user?.id) {
+        setBookmarks([]);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/users/${user.id}/bookmarks`,
-        );
-        const data = await response.json();
-        setBookmarks(data);
-      } catch (error) {
-        console.error("Error fetching bookmarks:", error);
+        const response = await fetcher(`/api/users/${user.id}/bookmarks`, {
+          method: "GET",
+        });
+
+        setBookmarks(response?.data ?? []);
+        setError(null);
+      } catch (fetchError) {
+        console.error("Error fetching bookmarks:", fetchError);
         setError(
-          error.message || "Failed to load bookmarks. Please try again later.",
+          fetchError.message ||
+            "Failed to load bookmarks. Please try again later.",
         );
       } finally {
         setLoading(false);
       }
     };
+
     fetchBookmarks();
-  }, [user.id]);
+  }, [user?.id]);
 
   if (error) {
     return <FetchError message={error} />;
@@ -39,7 +48,6 @@ const BookMarkPage = () => {
     <div>
       <BookmarkHeader />
 
-      {/* bookmarks list  */}
       <div>
         <div>
           {loading ? (
@@ -48,9 +56,28 @@ const BookMarkPage = () => {
             </div>
           ) : bookmarks.length > 0 ? (
             <div className="divide-y">
-              {bookmarks.map((bookmark) => (
-                <p>{bookmark.id}</p>
-              ))}
+              {bookmarks.map((bookmark, index) => {
+                const bookmarkKey =
+                  bookmark._id ?? bookmark.tweetId ?? `${bookmark.userId}-${index}`;
+                const bookmarkLabel =
+                  bookmark.content ??
+                  bookmark.tweet?.content ??
+                  `Saved post ${index + 1}`;
+                const bookmarkMeta = bookmark.tweetId ?? bookmark.tweet?._id;
+
+                return (
+                  <div key={bookmarkKey} className="px-4 py-4">
+                    <p className="text-x-text text-sm font-medium">
+                      {bookmarkLabel}
+                    </p>
+                    {bookmarkMeta && (
+                      <p className="text-x-text-sec mt-1 text-xs">
+                        Tweet ID: {bookmarkMeta}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="py-12 text-center">
@@ -69,3 +96,4 @@ const BookMarkPage = () => {
 };
 
 export default BookMarkPage;
+

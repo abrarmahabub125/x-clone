@@ -1,4 +1,5 @@
-import { useState } from "react";
+﻿import { useEffect, useState } from "react";
+import { fetcher } from "../../../../fetcher";
 import FollowSectionHeader from "./FollowSectionHeader";
 import FollowSuggestionCard from "./FollowSuggestionCard";
 import Spinner from "../../../shared/loaders/Spinner";
@@ -9,25 +10,24 @@ const FollowHome = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Simulate fetching suggestions from an API
-  useState(() => {
-    fetch("http://localhost:3000/api/users/connect", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Include cookies for authentication
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setSuggestions(data);
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      try {
+        const response = await fetcher("/api/users/connect", {
+          method: "GET",
+        });
+
+        setSuggestions(response?.data ?? []);
+        setError(null);
+      } catch (fetchError) {
+        console.error("Error fetching suggestions:", fetchError);
+        setError(fetchError.message || "Failed to load suggestions. Please try again.");
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching suggestions:", error);
-        setError("Failed to load suggestions. Please try again.");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchSuggestions();
   }, []);
 
   if (error) {
@@ -47,14 +47,19 @@ const FollowHome = () => {
             subtitle="Accounts you might want to follow based on product, design, and frontend interests"
           />
           <div>
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Spinner />
-              </div>
-            ) : (
+            {suggestions.length > 0 ? (
               suggestions.map((profile) => (
-                <FollowSuggestionCard key={profile._id} {...profile} />
+                <FollowSuggestionCard
+                  key={profile.userId ?? profile._id}
+                  {...profile}
+                />
               ))
+            ) : (
+              <div className="px-4 py-10 text-center">
+                <p className="text-x-text-sec text-sm">
+                  No follow suggestions are available right now.
+                </p>
+              </div>
             )}
           </div>
         </>
@@ -64,3 +69,4 @@ const FollowHome = () => {
 };
 
 export default FollowHome;
+

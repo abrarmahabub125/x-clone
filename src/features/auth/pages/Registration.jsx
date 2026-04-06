@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { fetcher } from "../../../../fetcher";
 import XLogo from "../../../shared/assets/logo/x-logo.svg";
-import { registerSchema } from "../../../shared/validations/registerSchema";
 import Spinner from "../../../shared/loaders/Spinner";
-import { useNavigate } from "react-router";
-import { Link } from "react-router";
+import { registerSchema } from "../../../shared/validations/registerSchema";
 
 const inputClassName =
   "border-x-divider text-x-text placeholder:text-x-text-sec focus:border-x-blue w-full rounded-md border bg-transparent px-4 py-3.5 text-base outline-none transition";
@@ -14,14 +14,12 @@ const Registration = () => {
     email: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({});
   const [submitMessage, setSubmitMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
-  // ✅ Handle input + real-time validation
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -29,27 +27,24 @@ const Registration = () => {
       ...prev,
       [name]: value,
     }));
+    setSubmitMessage("");
 
-    setSubmitMessage(""); // clear global error
-
-    // 🔥 field-level validation
     const fieldSchema = registerSchema.shape[name];
     const result = fieldSchema.safeParse(value);
 
     setErrors((prevErrors) => {
-      const newErrors = { ...prevErrors };
+      const nextErrors = { ...prevErrors };
 
       if (!result.success) {
-        newErrors[name] = [result.error.issues[0].message];
+        nextErrors[name] = [result.error.issues[0].message];
       } else {
-        delete newErrors[name];
+        delete nextErrors[name];
       }
 
-      return newErrors;
+      return nextErrors;
     });
   };
 
-  // ✅ Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -63,27 +58,14 @@ const Registration = () => {
 
     try {
       setIsSubmitting(true);
+      setSubmitMessage("");
 
-      const response = await fetch("http://localhost:3000/api/auth/register", {
+      await fetcher("/api/auth/register", {
         method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.data),
       });
 
-      const data = await response.json();
-
-      // ✅ Fix: use `status` instead of `success`
-      if (!data.status) {
-        setSubmitMessage(
-          data.message || "Registration failed. Please try again.",
-        );
-        return;
-      }
-
-      // ✅ success
       setErrors({});
-      setSubmitMessage("");
       setFormData({
         fullName: "",
         email: "",
@@ -93,7 +75,9 @@ const Registration = () => {
       navigate("/registration/verify-email", { replace: true });
     } catch (error) {
       console.log(error);
-      setSubmitMessage(error.message || "Something went wrong");
+      setSubmitMessage(
+        error.message || "Registration failed. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -117,7 +101,6 @@ const Registration = () => {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          {/* Social Buttons */}
           <button
             type="button"
             className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-medium transition"
@@ -132,14 +115,12 @@ const Registration = () => {
             Sign up with Apple
           </button>
 
-          {/* Divider */}
           <div className="flex items-center gap-3 py-1">
             <div className="border-x-divider h-px flex-1 border-t" />
             <span className="text-x-text text-sm">or</span>
             <div className="border-x-divider h-px flex-1 border-t" />
           </div>
 
-          {/* Full Name */}
           <div>
             <input
               type="text"
@@ -156,7 +137,6 @@ const Registration = () => {
             <p className="mt-1 text-sm text-red-500">{getError("fullName")}</p>
           </div>
 
-          {/* Email */}
           <div>
             <input
               type="email"
@@ -173,7 +153,6 @@ const Registration = () => {
             <p className="mt-1 text-sm text-red-500">{getError("email")}</p>
           </div>
 
-          {/* Password */}
           <div>
             <input
               type="password"
@@ -190,12 +169,10 @@ const Registration = () => {
             <p className="mt-1 text-sm text-red-500">{getError("password")}</p>
           </div>
 
-          {/* Submit Error */}
           {submitMessage && (
             <p className="text-sm text-red-500">{submitMessage}</p>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -205,7 +182,6 @@ const Registration = () => {
           </button>
         </form>
 
-        {/* Footer */}
         <div className="mt-6 text-center">
           <p className="text-x-text-sec text-[15px] leading-6">
             Already have an account?

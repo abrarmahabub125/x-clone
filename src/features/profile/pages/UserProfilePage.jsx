@@ -1,7 +1,5 @@
-import { Suspense } from "react";
-import { CalendarDays, MapPin, MoreHorizontal } from "lucide-react";
+﻿import { CalendarDays, MapPin, MoreHorizontal } from "lucide-react";
 import { Outlet, useLoaderData, useParams } from "react-router";
-import Spinner from "../../../shared/loaders/Spinner";
 import BackButton from "../../../shared/ui/BackButton";
 import PageHeader from "../../../shared/ui/PageHeader";
 import TabItem from "../../../shared/ui/TabItem";
@@ -16,8 +14,17 @@ const profileTabs = [
 const UserProfilePage = () => {
   const { userId } = useParams();
   const profileBasePath = `/profile/${userId}`;
-
-  const profileData = useLoaderData();
+  const loaderData = useLoaderData();
+  const profileData = loaderData?.data ?? loaderData;
+  const joinedDate = profileData?.joinedAt ? new Date(profileData.joinedAt) : null;
+  const joinedAtLabel =
+    joinedDate && !Number.isNaN(joinedDate.getTime())
+      ? joinedDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "Recently joined";
 
   return (
     <div className="min-h-screen">
@@ -29,7 +36,7 @@ const UserProfilePage = () => {
               {profileData.fullName}
             </h1>
             <p className="text-x-text-sec text-xs sm:text-sm">
-              {profileData.totalPost} posts
+              {profileData.totalPost ?? 0} posts
             </p>
           </div>
         </div>
@@ -69,9 +76,7 @@ const UserProfilePage = () => {
               </h2>
             </div>
             {profileData.username && (
-              <p className="text-x-text-sec text-[15px]">
-                {profileData.username}
-              </p>
+              <p className="text-x-text-sec text-[15px]">@{profileData.username}</p>
             )}
           </div>
 
@@ -92,26 +97,20 @@ const UserProfilePage = () => {
 
               <div className="flex items-center gap-1.5">
                 <CalendarDays className="size-4" />
-                <span>
-                  {new Date(profileData.joinedAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
+                <span>{joinedAtLabel}</span>
               </div>
             </div>
 
             <div className="flex items-center gap-5 text-sm">
               <div className="flex items-center gap-1.5">
                 <span className="text-x-text font-semibold">
-                  {profileData.following.length}
+                  {profileData.following?.length ?? 0}
                 </span>
                 <span className="text-x-text-sec">Following</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-x-text font-semibold">
-                  {profileData.followers.length}
+                  {profileData.followers?.length ?? 0}
                 </span>
                 <span className="text-x-text-sec">Followers</span>
               </div>
@@ -126,9 +125,7 @@ const UserProfilePage = () => {
             <TabItem
               key={tab.label}
               label={tab.label}
-              path={
-                tab.path ? `${profileBasePath}/${tab.path}` : profileBasePath
-              }
+              path={tab.path ? `${profileBasePath}/${tab.path}` : profileBasePath}
               end={!tab.path}
             />
           ))}

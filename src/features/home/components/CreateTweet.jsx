@@ -1,4 +1,4 @@
-import {
+﻿import {
   CalendarClock,
   GiftIcon,
   Globe,
@@ -7,50 +7,53 @@ import {
   MapPin,
   Smile,
 } from "lucide-react";
-import { useRef } from "react";
-import MyImage from "../../../shared/assets/logo/my-photo.jpg";
-import { useState } from "react";
-import { useAuth } from "../../auth/hooks/useAuth";
-import Spinner from "../../../shared/loaders/Spinner";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { fetcher } from "../../../../fetcher";
+import MyImage from "../../../shared/assets/logo/my-photo.jpg";
+import Spinner from "../../../shared/loaders/Spinner";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 const CreateTweet = () => {
   const textareaRef = useRef(null);
   const [tweet, setTweet] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const { user } = useAuth().user;
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const MAX_HEIGHT = 200;
 
   const handleInput = () => {
-    const el = textareaRef.current;
+    const element = textareaRef.current;
 
-    el.style.height = "auto";
+    element.style.height = "auto";
 
-    if (el.scrollHeight > MAX_HEIGHT) {
-      el.style.height = MAX_HEIGHT + "px";
-      el.style.overflowY = "auto";
+    if (element.scrollHeight > MAX_HEIGHT) {
+      element.style.height = `${MAX_HEIGHT}px`;
+      element.style.overflowY = "auto";
     } else {
-      el.style.height = el.scrollHeight + "px";
-      el.style.overflowY = "hidden";
+      element.style.height = `${element.scrollHeight}px`;
+      element.style.overflowY = "hidden";
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
 
     if (tweet.trim() === "") {
       setError("Tweet content cannot be empty");
       return;
     }
 
+    if (!user?.id) {
+      setError("You need to be signed in to create a tweet.");
+      return;
+    }
+
     const tweetData = {
       userId: user.id,
-      content: tweet.trim().toString(),
+      content: tweet.trim(),
       media: "",
       likesCount: 0,
       commentsCount: 0,
@@ -60,31 +63,19 @@ const CreateTweet = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/tweets", {
+      setError(null);
+
+      await fetcher("/api/tweets", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
         body: JSON.stringify(tweetData),
       });
 
-      if (!response.ok) {
-        setError("Failed to create tweet");
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Tweet created successfully:", data);
-
-      if (data.status) {
-        navigate("/");
-      }
-
-      // Clear the textarea after successful submission
       setTweet("");
-    } catch (err) {
-      setError(err.message || "An error occurred while creating the tweet");
+      navigate("/");
+    } catch (submitError) {
+      setError(
+        submitError.message || "An error occurred while creating the tweet",
+      );
     } finally {
       setLoading(false);
     }
@@ -174,7 +165,8 @@ const CreateTweet = () => {
             <div>
               <button
                 type="submit"
-                className="bg-x-bgOpposite text-x-textOpposite cursor-pointer rounded-full px-4 py-1 font-medium outline-0 transition-all duration-200 active:scale-95"
+                disabled={loading}
+                className="bg-x-bgOpposite text-x-textOpposite cursor-pointer rounded-full px-4 py-1 font-medium outline-0 transition-all duration-200 active:scale-95 disabled:opacity-60"
               >
                 {loading ? <Spinner /> : <span>Post</span>}
               </button>
@@ -187,3 +179,4 @@ const CreateTweet = () => {
 };
 
 export default CreateTweet;
+

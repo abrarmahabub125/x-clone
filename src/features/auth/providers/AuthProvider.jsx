@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { fetcher } from "../../../../fetcher";
 
 const AuthProvider = ({ children }) => {
   // fetch user data and authentication status here, and pass it down through the context
@@ -7,19 +8,13 @@ const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserData = useCallback(async () => {
-    try {
-      const response = await fetch("http://localhost:3000/api/auth/get-me", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // include cookies for authentication
-      });
+    setIsLoading(true);
 
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      } else {
-        setUser(null);
-      }
+    try {
+      const response = await fetcher("/api/auth/get-me", {
+        method: "GET",
+      });
+      setUser(response?.data?.user ?? null);
     } catch (error) {
       console.error("Error fetching user data:", error);
       setUser(null);

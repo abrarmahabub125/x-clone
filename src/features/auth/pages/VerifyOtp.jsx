@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { fetcher } from "../../../../fetcher";
 import XLogo from "../../../shared/assets/logo/x-logo.svg";
 import Spinner from "../../../shared/loaders/Spinner";
 
@@ -9,56 +10,53 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
 
   const [otpDigits, setOtpDigits] = useState(Array(OTP_LENGTH).fill(""));
-  const inputRefs = useRef([]);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [responseMessage, setResponseMessage] = useState(null);
+  const inputRefs = useRef([]);
 
-  // ================= OTP INPUT =================
   const handleChange = (index, e) => {
     const value = e.target.value.replace(/\D/, "");
+    const nextOtp = [...otpDigits];
 
-    const newOtp = [...otpDigits];
-    newOtp[index] = value;
-    setOtpDigits(newOtp);
+    nextOtp[index] = value;
+    setOtpDigits(nextOtp);
 
     if (value && index < OTP_LENGTH - 1) {
-      inputRefs.current[index + 1].focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
-      const newOtp = [...otpDigits];
-      newOtp[index - 1] = "";
-      setOtpDigits(newOtp);
-      inputRefs.current[index - 1].focus();
+      const nextOtp = [...otpDigits];
+
+      nextOtp[index - 1] = "";
+      setOtpDigits(nextOtp);
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // ================= PASTE SUPPORT =================
   const handlePaste = (e) => {
     e.preventDefault();
 
-    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "");
-    if (!pastedData) return;
+    const pastedDigits = e.clipboardData.getData("text").replace(/\D/g, "");
 
-    const digits = pastedData.slice(0, OTP_LENGTH).split("");
-
-    const newOtp = Array(OTP_LENGTH).fill("");
-    digits.forEach((digit, index) => {
-      newOtp[index] = digit;
-    });
-
-    setOtpDigits(newOtp);
-
-    const lastIndex = digits.length - 1;
-    if (lastIndex >= 0) {
-      inputRefs.current[lastIndex].focus();
+    if (!pastedDigits) {
+      return;
     }
+
+    const nextOtp = Array(OTP_LENGTH).fill("");
+    pastedDigits
+      .slice(0, OTP_LENGTH)
+      .split("")
+      .forEach((digit, index) => {
+        nextOtp[index] = digit;
+      });
+
+    setOtpDigits(nextOtp);
+    inputRefs.current[Math.min(pastedDigits.length, OTP_LENGTH) - 1]?.focus();
   };
 
-  // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -76,44 +74,30 @@ const VerifyOtp = () => {
       setIsSubmitting(true);
       setResponseMessage(null);
 
-      const response = await fetch(
-        "http://localhost:3000/api/auth/verify-otp",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ OTP: enteredOtp }),
-        },
-      );
-
-      const data = await response.json();
-
-      setResponseMessage({
-        success: data.status,
-        message: data.message,
+      const response = await fetcher("/api/auth/verify-otp", {
+        method: "POST",
+        body: JSON.stringify({ OTP: enteredOtp }),
       });
 
-      if (data.status) {
-        setOtpDigits(Array(OTP_LENGTH).fill(""));
+      setOtpDigits(Array(OTP_LENGTH).fill(""));
+      setResponseMessage({
+        success: true,
+        message: response.message,
+      });
 
-        setTimeout(() => {
-          navigate("/login");
-        }, 500);
-      }
+      setTimeout(() => {
+        navigate("/login");
+      }, 500);
 
-      // auto clear message
-      setTimeout(() => setResponseMessage(null), 500);
-    } catch (err) {
-      console.error(err);
-
+      setTimeout(() => setResponseMessage(null), 1500);
+    } catch (error) {
+      console.error(error);
       setResponseMessage({
         success: false,
-        message: "Something went wrong. Try again.",
+        message: error.message || "Something went wrong. Try again.",
       });
 
-      setTimeout(() => setResponseMessage(null), 500);
+      setTimeout(() => setResponseMessage(null), 1500);
     } finally {
       setIsSubmitting(false);
     }
@@ -121,7 +105,6 @@ const VerifyOtp = () => {
 
   return (
     <div className="fixed top-0 left-0 flex h-screen w-full items-center justify-center gap-x-40">
-      {/* Logo */}
       <div>
         <img
           src={XLogo}
@@ -130,7 +113,6 @@ const VerifyOtp = () => {
         />
       </div>
 
-      {/* OTP Card */}
       <div className="max-w-md space-y-5">
         <div className="border-x-divider from-x-surface to-x-bg rounded-2xl border bg-linear-to-b p-5">
           <p className="text-x-text-sec text-sm leading-6">
@@ -139,7 +121,6 @@ const VerifyOtp = () => {
           </p>
 
           <form className="mt-5 space-y-5" onSubmit={handleSubmit}>
-            {/* OTP Inputs */}
             <div
               className="grid grid-cols-6 gap-2 sm:gap-3"
               onPaste={handlePaste}
@@ -147,7 +128,9 @@ const VerifyOtp = () => {
               {otpDigits.map((digit, index) => (
                 <input
                   key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
+                  ref={(element) => {
+                    inputRefs.current[index] = element;
+                  }}
                   type="text"
                   inputMode="numeric"
                   maxLength={1}
@@ -159,14 +142,12 @@ const VerifyOtp = () => {
               ))}
             </div>
 
-            {/* Timer */}
             <div className="border-x-divider flex items-center justify-between rounded-xl border px-3 py-2">
               <span className="text-x-text-sec text-sm">
                 Code expires in 10 minutes.
               </span>
             </div>
 
-            {/* Messages */}
             {responseMessage && (
               <p
                 className={`text-sm font-medium ${
@@ -177,7 +158,6 @@ const VerifyOtp = () => {
               </p>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -186,7 +166,6 @@ const VerifyOtp = () => {
               {isSubmitting ? <Spinner /> : "Verify and continue"}
             </button>
 
-            {/* Resend */}
             <button
               type="button"
               className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-semibold transition-colors duration-200"
