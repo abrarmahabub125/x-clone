@@ -177,7 +177,8 @@ const MainSidebar = () => {
                     <div className="flex items-center gap-1.5 rounded-full transition-colors duration-200">
                       <div className="h-full pr-6 pl-1">
                         <span className="text-sm whitespace-nowrap sm:text-base">
-                          Log out {user.username ? `@${user.username}` : user.fullName}
+                          Log out{" "}
+                          {user.username ? `@${user.username}` : user.fullName}
                         </span>
                       </div>
                     </div>

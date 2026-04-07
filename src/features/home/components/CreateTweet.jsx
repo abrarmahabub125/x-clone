@@ -10,9 +10,9 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { fetcher } from "../../../../fetcher";
-import MyImage from "../../../shared/assets/logo/my-photo.jpg";
 import Spinner from "../../../shared/loaders/Spinner";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { toast } from "react-hot-toast";
 
 const CreateTweet = () => {
   const textareaRef = useRef(null);
@@ -71,11 +71,15 @@ const CreateTweet = () => {
       });
 
       setTweet("");
-      navigate("/");
+      toast.success("Tweet successfully published.");
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
     } catch (submitError) {
       setError(
         submitError.message || "An error occurred while creating the tweet",
       );
+      toast.error(error);
     } finally {
       setLoading(false);
     }
@@ -91,7 +95,10 @@ const CreateTweet = () => {
           <div className="size-10 overflow-hidden rounded-full">
             <img
               className="h-full w-full object-cover object-center"
-              src={MyImage}
+              src={
+                user?.profilePic ||
+                "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+              }
               alt="profile-image"
             />
           </div>
@@ -120,12 +127,6 @@ const CreateTweet = () => {
                 </span>
               </div>
             </div>
-          </div>
-
-          <div>
-            {error && (
-              <p className="mb-2 py-1.5 text-sm text-red-600">{error}</p>
-            )}
           </div>
 
           <div className="border-x-divider flex w-full items-center justify-between border-t py-2">
@@ -179,4 +180,3 @@ const CreateTweet = () => {
 };
 
 export default CreateTweet;
-

@@ -7,28 +7,11 @@
   Repeat2,
 } from "lucide-react";
 import { Link } from "react-router";
+import { formatTweetTime } from "../utils/formatTweetTime";
+import { formatNumber } from "../utils/formatNumber";
 
 const actionBaseClass =
   "group inline-flex items-center gap-1.5 rounded-full text-x-text-sec transition-colors duration-200";
-
-function formatTweetTimestamp(createdAt) {
-  if (!createdAt) {
-    return "";
-  }
-
-  const parsedDate = new Date(createdAt);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return createdAt;
-  }
-
-  return parsedDate.toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
 
 const TweetCard = ({
   userId,
@@ -46,7 +29,10 @@ const TweetCard = ({
     profilePic = "",
   } = user ?? {};
   const authorHref = userId ? `/profile/${userId}` : null;
-  const timestamp = formatTweetTimestamp(createdAt);
+  const timestamp = formatTweetTime(createdAt);
+  const likes = formatNumber(likesCount);
+  const retweets = formatNumber(retweetsCount);
+  const views = formatNumber(viewsCount);
 
   return (
     <article className="border-x-divider hover:bg-x-surface/40 flex gap-3 border-b px-4 py-3 transition-colors duration-200">
@@ -81,8 +67,30 @@ const TweetCard = ({
               {username && (
                 <span className="text-x-text-sec truncate">@{username}</span>
               )}
-              {timestamp && <span className="text-x-text-sec">,</span>}
-              {timestamp && <span className="text-x-text-sec">{timestamp}</span>}
+              {timestamp && (
+                <span className="text-x-text-sec">
+                  <svg
+                    fill="#828385"
+                    width="13px"
+                    height="13px"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path d="M7.8 10a2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0-4.4 0z"></path>
+                    </g>
+                  </svg>
+                </span>
+              )}
+              {timestamp && (
+                <span className="text-x-text-sec">{timestamp}</span>
+              )}
             </div>
           </div>
 
@@ -112,21 +120,21 @@ const TweetCard = ({
             <span className="group-hover:bg-x-green/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
               <Repeat2 className="size-4" />
             </span>
-            <span>{retweetsCount}</span>
+            <span>{retweets}</span>
           </button>
 
           <button className={`${actionBaseClass} hover:text-x-red`}>
             <span className="group-hover:bg-x-red/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
               <Heart className="size-4" />
             </span>
-            <span>{likesCount}</span>
+            <span>{likes}</span>
           </button>
 
           <button className={`${actionBaseClass} hover:text-x-blue`}>
             <span className="group-hover:bg-x-blue/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
               <BarChart2 className="size-4" />
             </span>
-            <span>{viewsCount}</span>
+            <span>{views}</span>
           </button>
 
           <div className="text-x-text-sec flex items-center justify-end gap-1">

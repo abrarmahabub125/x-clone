@@ -5,8 +5,9 @@ import ExploreTopicCard from "./ExploreTopicCard";
 
 const stories = [
   {
-    category: "Technology · LIVE",
-    title: "Teams are rebuilding profile and feed experiences with cleaner primitives",
+    category: "Technology ï¿½ LIVE",
+    title:
+      "Teams are rebuilding profile and feed experiences with cleaner primitives",
     meta: "Reusable cards, stable routes, and consistent headers are at the center of today's frontend discussions.",
     posts: "24.6K",
     image: MyPhoto,
@@ -34,7 +35,7 @@ const News = () => {
         title="Frontend teams are putting visual clarity back at the center"
         description="Across products, teams are investing in stronger card design, more readable layouts, and systems that scale without feeling generic."
         image={MyPhoto}
-        meta="Technology · 18K posts"
+        meta="Technology ï¿½ 18K posts"
       />
 
       <ExploreSectionHeader
