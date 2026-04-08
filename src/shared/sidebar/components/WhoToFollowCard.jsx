@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import MyPhoto from "../../assets/logo/my-photo.jpg";
+import { BadgeCheck } from "lucide-react";
 
 const WhoToFollowCard = ({ userId, fullName, username, profilePic }) => {
   const avatarUrl = profilePic
@@ -16,10 +16,11 @@ const WhoToFollowCard = ({ userId, fullName, username, profilePic }) => {
           />
         </div>
         <div className="flex min-w-0 flex-col justify-start">
-          <Link to={`/profile/${userId}`}>
+          <Link className="flex items-center gap-1" to={`/profile/${userId}`}>
             <span className="text-x-text truncate text-[15px] leading-5 font-bold transition-all duration-200 hover:underline">
               {fullName}
             </span>
+            <BadgeCheck className="fill-x-blue text-x-bg size-4" />
           </Link>
           {username && (
             <span className="text-x-text-sec text-[13px]">{username}</span>

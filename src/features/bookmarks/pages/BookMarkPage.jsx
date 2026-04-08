@@ -1,9 +1,10 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 import { useAuth } from "../../auth/hooks/useAuth";
 import BookmarkHeader from "../components/BookmarkHeader";
+import TweetCard from "../../../shared/ui/TweetCard";
 
 const BookMarkPage = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -20,12 +21,13 @@ const BookMarkPage = () => {
       }
 
       try {
-        const response = await fetcher(`/api/users/${user.id}/bookmarks`, {
+        setLoading(true);
+        setError(null);
+        const response = await fetcher(`/api/bookmarks`, {
           method: "GET",
         });
 
         setBookmarks(response?.data ?? []);
-        setError(null);
       } catch (fetchError) {
         console.error("Error fetching bookmarks:", fetchError);
         setError(
@@ -39,6 +41,16 @@ const BookMarkPage = () => {
 
     fetchBookmarks();
   }, [user?.id]);
+
+  const handleBookmarkChange = (tweetId, nextIsBookmarked) => {
+    if (nextIsBookmarked) {
+      return;
+    }
+
+    setBookmarks((prevBookmarks) =>
+      prevBookmarks.filter((bookmark) => bookmark._id !== tweetId),
+    );
+  };
 
   if (error) {
     return <FetchError message={error} />;
@@ -56,28 +68,13 @@ const BookMarkPage = () => {
             </div>
           ) : bookmarks.length > 0 ? (
             <div className="divide-y">
-              {bookmarks.map((bookmark, index) => {
-                const bookmarkKey =
-                  bookmark._id ?? bookmark.tweetId ?? `${bookmark.userId}-${index}`;
-                const bookmarkLabel =
-                  bookmark.content ??
-                  bookmark.tweet?.content ??
-                  `Saved post ${index + 1}`;
-                const bookmarkMeta = bookmark.tweetId ?? bookmark.tweet?._id;
-
-                return (
-                  <div key={bookmarkKey} className="px-4 py-4">
-                    <p className="text-x-text text-sm font-medium">
-                      {bookmarkLabel}
-                    </p>
-                    {bookmarkMeta && (
-                      <p className="text-x-text-sec mt-1 text-xs">
-                        Tweet ID: {bookmarkMeta}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
+              {bookmarks.map((bookmark) => (
+                <TweetCard
+                  key={bookmark._id}
+                  {...bookmark}
+                  onBookmarkChange={handleBookmarkChange}
+                />
+              ))}
             </div>
           ) : (
             <div className="py-12 text-center">
@@ -96,4 +93,3 @@ const BookMarkPage = () => {
 };
 
 export default BookMarkPage;
-

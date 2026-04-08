@@ -7,7 +7,8 @@ import CreateTweet from "../components/CreateTweet";
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const activeTab = location.pathname === "/following" ? "following" : "for_you";
+  const activeTab =
+    location.pathname === "/following" ? "following" : "for_you";
 
   const handleTabChange = (tab) => {
     navigate(tab === "following" ? "/following" : "/");
@@ -17,7 +18,7 @@ const HomePage = () => {
     <div>
       <HomeHeader isActive={activeTab} setActive={handleTabChange} />
       <div>
-        <CreateTweet />
+        {activeTab === "for_you" && <CreateTweet />}
         {activeTab === "for_you" ? <NewsFeed /> : <FollowingFeed />}
       </div>
     </div>

@@ -1,4 +1,4 @@
-﻿import TweetCard from "../../../shared/ui/TweetCard";
+import TweetCard from "../../../shared/ui/TweetCard";
 
 function normalizeProfilePost(post) {
   return {
@@ -10,6 +10,7 @@ function normalizeProfilePost(post) {
     viewsCount: post.viewsCount ?? post.views ?? 0,
     retweetsCount: post.retweetsCount ?? post.reposts ?? 0,
     createdAt: post.createdAt ?? post.time ?? "",
+    isBookmarked: Boolean(post.isBookmarked),
     user: post.user ?? {
       fullName: post.author ?? "Unknown User",
       username: post.handle ?? "",

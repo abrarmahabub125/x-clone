@@ -1,4 +1,4 @@
-﻿import {
+import {
   BadgeCheck,
   BarChart2,
   Bookmark,
@@ -9,11 +9,15 @@
 import { Link } from "react-router";
 import { formatTweetTime } from "../utils/formatTweetTime";
 import { formatNumber } from "../utils/formatNumber";
+import { fetcher } from "../../../fetcher";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 const actionBaseClass =
   "group inline-flex items-center gap-1.5 rounded-full text-x-text-sec transition-colors duration-200";
 
 const TweetCard = ({
+  _id,
   userId,
   content,
   media,
@@ -22,7 +26,16 @@ const TweetCard = ({
   retweetsCount,
   createdAt,
   user,
+  isBookmarked: initialIsBookmarked = false,
+  onBookmarkChange,
 }) => {
+  const [isBookmarked, setBookmarked] = useState(Boolean(initialIsBookmarked));
+  const [isBookmarkPending, setIsBookmarkPending] = useState(false);
+
+  useEffect(() => {
+    setBookmarked(Boolean(initialIsBookmarked));
+  }, [initialIsBookmarked, _id]);
+
   const {
     fullName = "Unknown User",
     username = "",
@@ -33,6 +46,44 @@ const TweetCard = ({
   const likes = formatNumber(likesCount);
   const retweets = formatNumber(retweetsCount);
   const views = formatNumber(viewsCount);
+
+  const addPostToBookmarks = async (tweetId) => {
+    if (isBookmarkPending) {
+      return;
+    }
+
+    const prevState = isBookmarked;
+    const nextState = !prevState;
+
+    setBookmarked(nextState);
+    setIsBookmarkPending(true);
+
+    try {
+      let result;
+
+      if (prevState) {
+        result = await fetcher(`/api/bookmarks/${tweetId}`, {
+          method: "DELETE",
+        });
+
+        toast.success(result?.message || "Removed from bookmarks");
+      } else {
+        result = await fetcher(`/api/bookmarks`, {
+          method: "POST",
+          body: JSON.stringify({ tweetId }),
+        });
+
+        toast.success(result?.message || "Added to bookmarks");
+      }
+
+      onBookmarkChange?.(tweetId, nextState);
+    } catch (err) {
+      setBookmarked(prevState);
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsBookmarkPending(false);
+    }
+  };
 
   return (
     <article className="border-x-divider hover:bg-x-surface/40 flex gap-3 border-b px-4 py-3 transition-colors duration-200">
@@ -138,9 +189,18 @@ const TweetCard = ({
           </button>
 
           <div className="text-x-text-sec flex items-center justify-end gap-1">
-            <button className="hover:text-x-blue">
+            <button
+              type="button"
+              disabled={isBookmarkPending}
+              onClick={() => addPostToBookmarks(_id)}
+              className="hover:text-x-blue disabled:cursor-not-allowed disabled:opacity-70"
+            >
               <span className="hover:bg-x-blue/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
-                <Bookmark className="size-4" />
+                <Bookmark
+                  className={
+                    isBookmarked ? "text-x-blue fill-x-blue size-4" : "size-4"
+                  }
+                />
               </span>
             </button>
           </div>
