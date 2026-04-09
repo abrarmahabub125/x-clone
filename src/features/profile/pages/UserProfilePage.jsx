@@ -119,20 +119,24 @@ const UserProfilePage = () => {
               />
             </div>
 
-            <div className="mt-3 flex items-center gap-2">
+            <div className="mt-3 flex items-center gap-3">
               <button
                 type="button"
-                className="hover:bg-x-surface border-x-divider inline-flex size-9 items-center justify-center rounded-full border transition-colors duration-200"
+                className="hover:bg-x-surface border-x-divider inline-flex size-9 cursor-pointer items-center justify-center rounded-full border transition-colors duration-200"
               >
                 <MoreHorizontal className="size-5" />
               </button>
-              {isOwnProfile && (
+              {isOwnProfile ? (
                 <button
                   type="button"
                   className="border-x-divider hover:bg-x-surface rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200"
                   onClick={() => setIsEditModalOpen(true)}
                 >
                   Edit profile
+                </button>
+              ) : (
+                <button className="text-x-textOpposite bg-x-bgOpposite h-9 cursor-pointer rounded-full px-4 font-medium transition-all hover:opacity-95">
+                  Follow
                 </button>
               )}
             </div>

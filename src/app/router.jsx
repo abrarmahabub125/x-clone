@@ -1,11 +1,13 @@
 ﻿import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
 import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
-import VerifyOtp from "../features/auth/pages/VerifyOtp";
-import LoginPage from "../features/auth/pages/Login";
-import Logout from "../features/auth/pages/Logout";
 import { fetcher } from "../../fetcher";
-import NotFoundPage from "../shared/ui/NotFoundPage";
+
+const VerifyOtp = lazy(() => import("../features/auth/pages/VerifyOtp"));
+const LoginPage = lazy(() => import("../features/auth/pages/Login"));
+const Logout = lazy(() => import("../features/auth/pages/Logout"));
+const NotFoundPage = lazy(() => import("../shared/ui/NotFoundPage"));
+const FetchError = lazy(() => import("../shared/ui/FetchError"));
 
 const App = lazy(() => import("./App"));
 const RootLayout = lazy(() => import("./layouts/RootLayout"));
@@ -72,7 +74,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     Component: App,
-    errorElement: <h1>Hello World!</h1>,
+    errorElement: FetchError,
     children: [
       { path: "register", Component: RegisterPage },
       { path: "login", Component: LoginPage },
@@ -151,5 +153,3 @@ const router = createBrowserRouter([
 ]);
 
 export { router };
-
-
