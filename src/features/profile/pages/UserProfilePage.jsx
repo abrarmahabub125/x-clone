@@ -1,13 +1,14 @@
 import { CalendarDays, MapPin, MoreHorizontal } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { Outlet, useLoaderData, useParams } from "react-router";
+import { Link, Outlet, useLoaderData, useParams } from "react-router";
 import { fetcher } from "../../../../fetcher";
 import { useAuth } from "../../auth/hooks/useAuth";
 import BackButton from "../../../shared/ui/BackButton";
 import PageHeader from "../../../shared/ui/PageHeader";
 import TabItem from "../../../shared/ui/TabItem";
 import EditProfileModal from "../components/EditProfileModal";
+import FollowButton from "../../../shared/ui/FollowButton";
 
 const FALLBACK_PROFILE_PIC =
   "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg";
@@ -135,9 +136,7 @@ const UserProfilePage = () => {
                   Edit profile
                 </button>
               ) : (
-                <button className="text-x-textOpposite bg-x-bgOpposite h-9 cursor-pointer rounded-full px-4 font-medium transition-all hover:opacity-95">
-                  Follow
-                </button>
+                <FollowButton userId={userId} />
               )}
             </div>
           </div>

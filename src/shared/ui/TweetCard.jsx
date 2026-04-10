@@ -87,17 +87,19 @@ const TweetCard = ({
 
   return (
     <article className="border-x-divider hover:bg-x-surface/40 flex gap-3 border-b px-4 py-3 transition-colors duration-200">
-      <div className="size-10 shrink-0 overflow-hidden rounded-full">
-        <img
-          className="h-full w-full object-cover object-center"
-          src={
-            profilePic
-              ? profilePic
-              : "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
-          }
-          alt={`${fullName} avatar`}
-        />
-      </div>
+      <Link to={authorHref}>
+        <div className="size-10 shrink-0 overflow-hidden rounded-full">
+          <img
+            className="h-full w-full object-cover object-center"
+            src={
+              profilePic
+                ? profilePic
+                : "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+            }
+            alt={`${fullName} avatar`}
+          />
+        </div>
+      </Link>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
@@ -105,12 +107,12 @@ const TweetCard = ({
             <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[15px] leading-5">
               {authorHref ? (
                 <Link to={authorHref}>
-                  <span className="text-x-text truncate font-semibold">
+                  <span className="text-x-text truncate font-semibold hover:underline">
                     {fullName}
                   </span>
                 </Link>
               ) : (
-                <span className="text-x-text truncate font-semibold">
+                <span className="text-x-text truncate font-semibold hover:underline">
                   {fullName}
                 </span>
               )}

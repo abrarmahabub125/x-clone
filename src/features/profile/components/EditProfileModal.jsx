@@ -113,7 +113,7 @@ const EditProfileModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-120 flex items-center justify-center bg-black/65 px-4 py-4 backdrop-blur-sm sm:px-6">
+    <div className="fixed inset-0 z-120 flex items-center justify-center bg-black/65 px-4 py-4 backdrop-blur-sm">
       <div
         className="absolute inset-0"
         onClick={() => !isSaving && onClose()}
@@ -121,7 +121,7 @@ const EditProfileModal = ({
       />
 
       <form
-        className="bg-x-bg relative z-121 flex h-[min(42rem,calc(100vh-1.5rem))] w-full max-w-2xl flex-col overflow-hidden rounded-3xl shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+        className="bg-x-bg border-x-divider relative z-121 flex h-[min(42rem,calc(100vh-1.5rem))] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
         onSubmit={handleSubmit}
       >
         {/* modal header  */}
@@ -183,7 +183,7 @@ const EditProfileModal = ({
               </div>
 
               <div className="mt-4 space-y-2">
-                <h3 className="text-x-text text-2xl font-black">
+                <h3 className="text-x-text text-2xl font-semibold">
                   {previewName}
                 </h3>
 

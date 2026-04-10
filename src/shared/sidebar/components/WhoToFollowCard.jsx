@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { BadgeCheck } from "lucide-react";
+import FollowButton from "../../ui/FollowButton";
 
 const WhoToFollowCard = ({ userId, fullName, username, profilePic }) => {
   const avatarUrl = profilePic
@@ -28,9 +29,7 @@ const WhoToFollowCard = ({ userId, fullName, username, profilePic }) => {
         </div>
       </div>
       <div>
-        <button className="bg-x-bgOpposite text-x-textOpposite cursor-pointer rounded-full px-4 py-1.5 text-[13px] font-bold transition-all hover:opacity-95 active:scale-95">
-          Follow
-        </button>
+        <FollowButton userId={userId} styles={"px-4 py-1.5 text-sm"} />
       </div>
     </div>
   );

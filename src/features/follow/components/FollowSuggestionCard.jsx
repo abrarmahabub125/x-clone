@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import FollowButton from "../../../shared/ui/FollowButton";
 
 const FollowSuggestionCard = ({
   userId,
@@ -43,9 +44,7 @@ const FollowSuggestionCard = ({
       </div>
 
       <div className="shrink-0">
-        <button className="bg-x-bgOpposite text-x-textOpposite rounded-full px-4 py-2 text-sm font-bold transition-all duration-200 hover:opacity-90 active:scale-95">
-          Follow
-        </button>
+        <FollowButton userId={userId} />
       </div>
     </article>
   );
