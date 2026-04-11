@@ -40,9 +40,6 @@ const ProfileLikesPage = lazy(
 const SettingsAndPrivacyPage = lazy(
   () => import("../features/settings/pages/SettingsAndPrivacyPage"),
 );
-const BusinessPage = lazy(
-  () => import("../features/business/pages/BusinessPage"),
-);
 
 const CreatePostModal = lazy(
   () => import("../features/post/pages/CreatePostModal"),
@@ -54,12 +51,6 @@ const AllMentions = lazy(
   () => import("../features/notifications/components/AllMentions"),
 );
 const ForYou = lazy(() => import("../features/explore/components/ForYou"));
-const Trending = lazy(() => import("../features/explore/components/Trending"));
-const News = lazy(() => import("../features/explore/components/News"));
-const Sports = lazy(() => import("../features/explore/components/Sports"));
-const Entertainment = lazy(
-  () => import("../features/explore/components/Entertainment"),
-);
 const CreatorsForYou = lazy(
   () => import("../features/follow/components/CreatorsForYou"),
 );
@@ -95,13 +86,6 @@ const router = createBrowserRouter([
               {
                 path: "explore",
                 Component: ExplorePage,
-                children: [
-                  { index: true, Component: ForYou },
-                  { path: "trending", Component: Trending },
-                  { path: "news", Component: News },
-                  { path: "sports", Component: Sports },
-                  { path: "entertainment", Component: Entertainment },
-                ],
               },
               {
                 path: "notifications",
@@ -139,7 +123,6 @@ const router = createBrowserRouter([
                 ],
               },
               { path: "settings", Component: SettingsAndPrivacyPage },
-              { path: "business", Component: BusinessPage },
             ],
           },
         ],

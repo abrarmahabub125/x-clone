@@ -9,6 +9,7 @@ import PageHeader from "../../../shared/ui/PageHeader";
 import TabItem from "../../../shared/ui/TabItem";
 import EditProfileModal from "../components/EditProfileModal";
 import FollowButton from "../../../shared/ui/FollowButton";
+import { formatNumber } from "../../../shared/utils/formatNumber";
 
 const FALLBACK_PROFILE_PIC =
   "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg";
@@ -174,13 +175,13 @@ const UserProfilePage = () => {
             <div className="flex items-center gap-5 text-sm">
               <div className="flex items-center gap-1.5">
                 <span className="text-x-text font-semibold">
-                  {profile.following?.length ?? 0}
+                  {formatNumber(profile.following?.length) ?? 0}
                 </span>
                 <span className="text-x-text-sec">Following</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-x-text font-semibold">
-                  {profile.followers?.length ?? 0}
+                  {formatNumber(profile.followers?.length) ?? 0}
                 </span>
                 <span className="text-x-text-sec">Followers</span>
               </div>

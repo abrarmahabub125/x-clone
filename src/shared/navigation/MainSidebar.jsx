@@ -1,14 +1,13 @@
 ﻿import {
+  BadgeCheck,
   Bell,
   BookmarkIcon,
-  CircleEllipsisIcon,
   EllipsisIcon,
   Home,
   Search,
   Settings,
   User2Icon,
   UserPlus2Icon,
-  ZapIcon,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
@@ -19,7 +18,6 @@ import MainLink from "./components/MainLink";
 import MorePopUp from "./components/MorePopUp";
 
 const MainSidebar = () => {
-  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [isAccountPopUpOpen, setIsAccountPopUpOpen] = useState(false);
   const { user } = useAuth();
   const location = useLocation();
@@ -77,61 +75,7 @@ const MainSidebar = () => {
             icon={<User2Icon />}
             label="Profile"
           />
-
-          <button
-            onClick={() => {
-              setIsAccountPopUpOpen(false);
-              setIsPopUpOpen(!isPopUpOpen);
-            }}
-            className="group flex justify-self-start"
-          >
-            <div>
-              <div className="relative">
-                {isPopUpOpen && (
-                  <MorePopUp>
-                    <div>
-                      <NavLink to="/business">
-                        <div className="px-1 py-2">
-                          <div className="flex items-center gap-1.5 rounded-full transition-colors duration-200">
-                            <div className="flex size-8 items-center justify-center rounded-full">
-                              <ZapIcon className="size-5" />
-                            </div>
-                            <div className="h-full pr-6 pl-1">
-                              <span className="text-base whitespace-nowrap sm:text-lg">
-                                Business
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </NavLink>
-                      <NavLink to="/settings">
-                        <div className="px-1 py-2">
-                          <div className="flex items-center gap-1.5 rounded-full transition-colors duration-200">
-                            <div className="flex size-8 items-center justify-center rounded-full">
-                              <Settings className="size-5" />
-                            </div>
-                            <div className="h-full pr-6 pl-1">
-                              <span className="text-base whitespace-nowrap sm:text-lg">
-                                Settings and privacy
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </NavLink>
-                    </div>
-                  </MorePopUp>
-                )}
-              </div>
-              <div className="group-hover:bg-x-surface inline-flex items-center justify-start gap-1.5 rounded-full transition-colors duration-200">
-                <div className="hover:bg-x-surface flex size-12 items-center justify-center rounded-full">
-                  <CircleEllipsisIcon />
-                </div>
-                <div className="hidden h-full pr-6 pl-1 lg:block">
-                  <span className="text-lg font-normal sm:text-xl">More</span>
-                </div>
-              </div>
-            </div>
-          </button>
+          <MainLink path="/settings" icon={<Settings />} label="Settings" />
         </div>
 
         <div>
@@ -190,7 +134,6 @@ const MainSidebar = () => {
         </div>
         <button
           onClick={() => {
-            setIsPopUpOpen(false);
             setIsAccountPopUpOpen(!isAccountPopUpOpen);
           }}
           className="hover:bg-x-surface flex w-full cursor-pointer items-center justify-between gap-x-4 rounded-full px-0.5 py-1 lg:px-2"
@@ -208,8 +151,9 @@ const MainSidebar = () => {
               />
             </div>
             <div className="hidden flex-col justify-start text-left lg:flex">
-              <span className="text-x-text cursor-pointer text-sm font-medium sm:text-base">
+              <span className="text-x-text flex cursor-pointer items-center gap-1 text-sm font-medium sm:text-base">
                 {user.fullName}
+                <BadgeCheck className="fill-x-blue text-x-bg size-4" />
               </span>
               {user.username && (
                 <span className="text-x-text-sec cursor-pointer text-xs font-light sm:text-base">

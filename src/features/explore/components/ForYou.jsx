@@ -1,58 +1,58 @@
-import MyPhoto from "../../../shared/assets/logo/my-photo.jpg";
-import ExploreHeroCard from "./ExploreHeroCard";
-import ExploreSectionHeader from "./ExploreSectionHeader";
-import ExploreTopicCard from "./ExploreTopicCard";
+import TweetCard from "../../../shared/ui/TweetCard";
+import FollowSuggestionCard from "../../follow/components/FollowSuggestionCard";
+import { Search } from "lucide-react";
 
-const topics = [
-  {
-    category: "Trending in Technology",
-    title: "React 19 patterns",
-    meta: "Developers are discussing compiler-friendly component structure and cleaner UI architecture.",
-    posts: "32.4K",
-    image: MyPhoto,
-  },
-  {
-    category: "Trending in Bangladesh",
-    title: "Remote frontend jobs",
-    meta: "Design systems, portfolio quality, and clean React structure are leading the conversation.",
-    posts: "18.7K",
-  },
-  {
-    category: "UI Design · Trending",
-    title: "Micro-interactions",
-    meta: "Teams are focusing less on flashy animation and more on clarity, rhythm, and motion restraint.",
-    posts: "9,842",
-    image: MyPhoto,
-  },
-  {
-    category: "Business & tech · Trending",
-    title: "Product polish",
-    meta: "People are comparing apps that feel fast and finished against ones that still feel template-based.",
-    posts: "11.2K",
-  },
-];
+const ForYou = ({ results }) => {
+  if (!results) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="mb-2 rounded-full p-5">
+          <Search className="text-x-text h-8 w-8" />
+        </div>
 
-const ForYou = () => {
+        <h2 className="text-x-text text-3xl font-semibold">Start Exploring</h2>
+
+        <p className="text-x-text-sec mt-2 max-w-md text-sm">
+          Search for people, posts, or topics.
+        </p>
+      </div>
+    );
+  }
+
+  const { users, tweets } = results;
+
+  console.log(users, tweets);
+
+  if (users.length < 1 && tweets.length < 1)
+    return (
+      <div className="py-12">
+        <p className="text-x-text text-center text-xl font-semibold">
+          No results found
+        </p>
+      </div>
+    );
+
   return (
     <div>
-      <ExploreHeroCard
-        eyebrow="For you"
-        title="Designing calmer, denser, more readable social feeds"
-        description="A closer look at how spacing, hierarchy, and content rhythm shape the experience of modern social products."
-        image={MyPhoto}
-        meta="Trending with frontend developers and product designers"
-      />
+      {users.length < 1 ? (
+        ""
+      ) : (
+        <div>
+          {users.map((user, idx) => (
+            <FollowSuggestionCard key={idx} {...user} />
+          ))}
+        </div>
+      )}
 
-      <ExploreSectionHeader
-        title="Trends for you"
-        subtitle="Picked based on design, product, and frontend conversations"
-      />
-
-      <div>
-        {topics.map((topic) => (
-          <ExploreTopicCard key={topic.title} {...topic} />
-        ))}
-      </div>
+      {tweets.length < 1 ? (
+        ""
+      ) : (
+        <div>
+          {tweets.map((tweet, idx) => (
+            <TweetCard key={idx} {...tweet} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

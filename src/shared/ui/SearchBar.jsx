@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { Form } from "react-router";
 
-const SearchBar = () => {
+const SearchBar = ({ query, setQuery }) => {
   return (
     <div className="w-full">
       <div>
@@ -12,8 +12,10 @@ const SearchBar = () => {
                 <Search className="stroke-x-text-sec size-4 stroke-2" />
               </span>
               <input
-                className="text-x-text focus-within:outline-x-blue h-full w-full rounded-full border-0 py-3 pr-4 pl-8 text-xs font-normal outline-0 transition-all duration-50 focus:outline-2"
+                className="text-x-text focus-within:outline-x-blue h-full w-full rounded-full border-0 py-3 pr-4 pl-8 text-sm font-normal outline-0 transition-all duration-50 focus:outline-2"
                 type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
               />
             </label>
