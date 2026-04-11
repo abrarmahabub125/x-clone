@@ -1,14 +1,14 @@
-const API_BASE_URL = "https://x-com-clone-api-server.onrender.com";
-
 function getApiUrl(path) {
-  const normalizedBaseUrl = API_BASE_URL.replace(/\/+$/, "");
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const normalizedPath = path.startsWith("/api")
+    ? path
+    : `/api${path.startsWith("/") ? path : `/${path}`}`;
 
-  return `${normalizedBaseUrl}${normalizedPath}`;
+  return normalizedPath;
 }
 
 export async function fetcher(path, options = {}) {
   const { body, headers, ...restOptions } = options;
+
   const isFormData =
     typeof FormData !== "undefined" && body instanceof FormData;
 
