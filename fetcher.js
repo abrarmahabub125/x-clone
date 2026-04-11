@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "https://x-com-clone-api-server.onrender.com";
 
 function getApiUrl(path) {
   const normalizedBaseUrl = API_BASE_URL.replace(/\/+$/, "");
