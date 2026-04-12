@@ -1,9 +1,14 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(
+  /\/api\/?$/,
+  "",
+);
+
 function getApiUrl(path) {
   const normalizedPath = path.startsWith("/api")
     ? path
     : `/api${path.startsWith("/") ? path : `/${path}`}`;
 
-  return normalizedPath;
+  return API_BASE_URL ? `${API_BASE_URL}${normalizedPath}` : normalizedPath;
 }
 
 export async function fetcher(path, options = {}) {
