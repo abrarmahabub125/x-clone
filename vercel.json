@@ -3,6 +3,10 @@
     {
       "source": "/api/(.*)",
       "destination": "https://x-com-clone-api-server.onrender.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

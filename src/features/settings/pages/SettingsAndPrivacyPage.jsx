@@ -1,22 +1,9 @@
-import { useState } from "react";
-import { AlertTriangle, Bell, ShieldCheck, Trash2, User } from "lucide-react";
+import { AlertTriangle, Trash2, User } from "lucide-react";
 import PageHeader from "../../../shared/ui/PageHeader";
 import BackButton from "../../../shared/ui/BackButton";
 import SettingIcon from "../../../shared/ui/SettingIcon";
 
 const SettingsAndPrivacyPage = () => {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteConfirmationPhrase, setDeleteConfirmationPhrase] = useState("");
-  const [accountDeleted, setAccountDeleted] = useState(false);
-
-  const handleDeleteAccount = () => {
-    if (deleteConfirmationPhrase.trim().toLowerCase() === "delete") {
-      setAccountDeleted(true);
-      setShowDeleteConfirm(false);
-      setDeleteConfirmationPhrase("");
-    }
-  };
-
   return (
     <div className="min-h-screen">
       <PageHeader>
@@ -113,55 +100,14 @@ const SettingsAndPrivacyPage = () => {
                   </div>
                 </div>
 
-                {accountDeleted ? (
-                  <div className="border-x-divider text-x-text mt-5 rounded-3xl border bg-white p-4 text-sm">
-                    <p className="text-x-text font-semibold">
-                      Account deletion complete
-                    </p>
-                    <p className="text-x-text-sec mt-2">
-                      Your account deletion request is recorded here as a
-                      completed UI flow.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="mt-5 space-y-4">
-                    {showDeleteConfirm ? (
-                      <div className="border-x-divider space-y-4 rounded-xl border p-4">
-                        <p className="text-x-text text-sm">
-                          Type <span className="font-semibold">DELETE</span> to
-                          confirm account removal.
-                        </p>
-                        <input
-                          value={deleteConfirmationPhrase}
-                          onChange={(event) =>
-                            setDeleteConfirmationPhrase(event.target.value)
-                          }
-                          placeholder="Type DELETE to confirm"
-                          className="border-x-divider bg-x-bg text-x-text focus:border-x-red w-full rounded-xl border px-4 py-3 text-sm transition outline-none"
-                        />
-                        <button
-                          type="button"
-                          disabled={
-                            deleteConfirmationPhrase.trim().toLowerCase() !==
-                            "delete"
-                          }
-                          onClick={handleDeleteAccount}
-                          className="bg-x-red hover:bg-opacity-90 w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-90"
-                        >
-                          Confirm delete account
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setShowDeleteConfirm(true)}
-                        className="bg-x-red/15 text-x-red mt-3 rounded-3xl px-4 py-2 text-sm font-semibold transition"
-                      >
-                        Delete account
-                      </button>
-                    )}
-                  </div>
-                )}
+                <div className="mt-5 space-y-4">
+                  <button
+                    type="button"
+                    className="bg-x-red/15 text-x-red mt-3 rounded-3xl px-4 py-2 text-sm font-semibold transition"
+                  >
+                    Delete account
+                  </button>
+                </div>
               </div>
             </section>
           </div>
