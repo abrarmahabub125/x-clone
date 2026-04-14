@@ -2,7 +2,7 @@ import { useState } from "react";
 import ProfileTimeline from "../components/ProfileTimeline";
 import { useEffect } from "react";
 import { fetcher } from "../../../../fetcher";
-import { useAuth } from "../../auth/hooks/useAuth";
+import { useParams } from "react-router";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 
@@ -10,23 +10,24 @@ const ProfileMediaPage = () => {
   const [medias, setMedias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const { id } = useAuth().user;
+  const { userId } = useParams();
 
   useEffect(() => {
     const fetchMedias = async () => {
       try {
-        const mediaData = await fetcher(`/api/users/${id}/medias`);
+        setLoading(true);
+        const mediaData = await fetcher(`/api/users/${userId}/medias`);
 
         setMedias(mediaData.data);
-        setLoading(false);
       } catch (err) {
         setError(err.message || "Something went wrong!");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchMedias();
-  }, [id]);
+  }, [userId]);
 
   if (loading) {
     return (
@@ -37,7 +38,7 @@ const ProfileMediaPage = () => {
   }
 
   if (error) {
-    return <FetchError />;
+    return <FetchError message={error} />;
   }
 
   return (

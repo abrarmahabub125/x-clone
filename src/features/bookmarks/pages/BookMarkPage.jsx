@@ -5,6 +5,10 @@ import FetchError from "../../../shared/ui/FetchError";
 import { useAuth } from "../../auth/hooks/useAuth";
 import BookmarkHeader from "../components/BookmarkHeader";
 import TweetCard from "../../../shared/ui/TweetCard";
+import {
+  removeTweetById,
+  updateTweetById,
+} from "../../../shared/utils/tweetListState";
 
 const BookMarkPage = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -47,8 +51,15 @@ const BookMarkPage = () => {
       return;
     }
 
+    setBookmarks((prevBookmarks) => removeTweetById(prevBookmarks, tweetId));
+  };
+
+  const handleLikeChange = (tweetId, change) => {
     setBookmarks((prevBookmarks) =>
-      prevBookmarks.filter((bookmark) => bookmark._id !== tweetId),
+      updateTweetById(prevBookmarks, tweetId, {
+        isLiked: change.isLiked,
+        likesCount: change.likesCount,
+      }),
     );
   };
 
@@ -72,6 +83,7 @@ const BookMarkPage = () => {
                 <TweetCard
                   key={bookmark._id}
                   {...bookmark}
+                  onLikeChange={handleLikeChange}
                   onBookmarkChange={handleBookmarkChange}
                 />
               ))}

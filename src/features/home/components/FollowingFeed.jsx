@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import { updateTweetById } from "../../../shared/utils/tweetListState";
 
 const FollowingFeed = () => {
   const [followingData, setFollowingData] = useState([]);
@@ -23,6 +24,23 @@ const FollowingFeed = () => {
 
     fetchFollowingData();
   }, []);
+
+  const handleLikeChange = (tweetId, change) => {
+    setFollowingData((currentFeed) =>
+      updateTweetById(currentFeed, tweetId, {
+        isLiked: change.isLiked,
+        likesCount: change.likesCount,
+      }),
+    );
+  };
+
+  const handleBookmarkChange = (tweetId, nextIsBookmarked) => {
+    setFollowingData((currentFeed) =>
+      updateTweetById(currentFeed, tweetId, {
+        isBookmarked: nextIsBookmarked,
+      }),
+    );
+  };
 
   if (loading) {
     return (
@@ -57,7 +75,12 @@ const FollowingFeed = () => {
             </div>
           ) : (
             followingData.map((tweet) => (
-              <TweetCard key={tweet._id} {...tweet} />
+              <TweetCard
+                key={tweet._id}
+                {...tweet}
+                onLikeChange={handleLikeChange}
+                onBookmarkChange={handleBookmarkChange}
+              />
             ))
           )}
         </div>

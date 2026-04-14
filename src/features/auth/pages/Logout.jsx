@@ -51,7 +51,7 @@ const Logout = () => {
           <button
             onClick={handleLogout}
             disabled={isSubmitting}
-            className="bg-x-red hover:bg-x-red/80 flex-1 rounded-xl py-2 font-medium text-white transition duration-200 disabled:opacity-60"
+            className="bg-x-red/15 text-x-red flex-1 rounded-xl border py-2 font-medium transition duration-200 disabled:opacity-60"
           >
             {isSubmitting ? "Logging out..." : "Logout"}
           </button>

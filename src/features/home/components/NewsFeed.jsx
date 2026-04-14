@@ -3,6 +3,7 @@ import TweetCard from "../../../shared/ui/TweetCard";
 import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import { updateTweetById } from "../../../shared/utils/tweetListState";
 
 const NewsFeed = () => {
   const [feedData, setFeedData] = useState([]);
@@ -23,6 +24,23 @@ const NewsFeed = () => {
 
     fetchFeedData();
   }, []);
+
+  const handleLikeChange = (tweetId, change) => {
+    setFeedData((currentFeed) =>
+      updateTweetById(currentFeed, tweetId, {
+        isLiked: change.isLiked,
+        likesCount: change.likesCount,
+      }),
+    );
+  };
+
+  const handleBookmarkChange = (tweetId, nextIsBookmarked) => {
+    setFeedData((currentFeed) =>
+      updateTweetById(currentFeed, tweetId, {
+        isBookmarked: nextIsBookmarked,
+      }),
+    );
+  };
 
   if (loading) {
     return (
@@ -55,7 +73,14 @@ const NewsFeed = () => {
           </div>
         </div>
       ) : (
-        feedData.map((tweet) => <TweetCard key={tweet._id} {...tweet} />)
+        feedData.map((tweet) => (
+          <TweetCard
+            key={tweet._id}
+            {...tweet}
+            onLikeChange={handleLikeChange}
+            onBookmarkChange={handleBookmarkChange}
+          />
+        ))
       )}
     </div>
   );

@@ -2,7 +2,7 @@ import TweetCard from "../../../shared/ui/TweetCard";
 import FollowSuggestionCard from "../../follow/components/FollowSuggestionCard";
 import { Search } from "lucide-react";
 
-const ForYou = ({ results }) => {
+const ForYou = ({ results, onLikeChange, onBookmarkChange }) => {
   if (!results) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -20,8 +20,6 @@ const ForYou = ({ results }) => {
   }
 
   const { users, tweets } = results;
-
-  console.log(users, tweets);
 
   if (users.length < 1 && tweets.length < 1)
     return (
@@ -49,7 +47,12 @@ const ForYou = ({ results }) => {
       ) : (
         <div>
           {tweets.map((tweet, idx) => (
-            <TweetCard key={idx} {...tweet} />
+            <TweetCard
+              key={tweet._id ?? idx}
+              {...tweet}
+              onLikeChange={onLikeChange}
+              onBookmarkChange={onBookmarkChange}
+            />
           ))}
         </div>
       )}

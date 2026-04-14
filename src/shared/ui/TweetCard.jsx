@@ -12,6 +12,7 @@ import { formatNumber } from "../utils/formatNumber";
 import { fetcher } from "../../../fetcher";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 
 const actionBaseClass =
   "group inline-flex items-center gap-1.5 rounded-full text-x-text-sec transition-colors duration-200";
@@ -26,15 +27,25 @@ const TweetCard = ({
   retweetsCount,
   createdAt,
   user,
+  isLiked: initialIsLiked = false,
   isBookmarked: initialIsBookmarked = false,
+  onLikeChange,
   onBookmarkChange,
 }) => {
+  const { user: loggedInUser } = useAuth();
+  const [isLiked, setLiked] = useState(Boolean(initialIsLiked));
+  const [currentLikesCount, setCurrentLikesCount] = useState(
+    Number(likesCount) || 0,
+  );
+  const [isLikePending, setIsLikePending] = useState(false);
   const [isBookmarked, setBookmarked] = useState(Boolean(initialIsBookmarked));
   const [isBookmarkPending, setIsBookmarkPending] = useState(false);
 
   useEffect(() => {
+    setLiked(Boolean(initialIsLiked));
+    setCurrentLikesCount(Number(likesCount) || 0);
     setBookmarked(Boolean(initialIsBookmarked));
-  }, [initialIsBookmarked, _id]);
+  }, [initialIsBookmarked, initialIsLiked, likesCount, _id]);
 
   const {
     fullName = "Unknown User",
@@ -43,9 +54,58 @@ const TweetCard = ({
   } = user ?? {};
   const authorHref = userId ? `/profile/${userId}` : null;
   const timestamp = formatTweetTime(createdAt);
-  const likes = formatNumber(likesCount);
+  const likes = formatNumber(currentLikesCount);
   const retweets = formatNumber(retweetsCount);
   const views = formatNumber(viewsCount);
+
+  const toggleLike = async (tweetId) => {
+    if (isLikePending) {
+      return;
+    }
+
+    if (!loggedInUser?.id) {
+      toast.error("You need to be signed in to like a post.");
+      return;
+    }
+
+    const previousIsLiked = isLiked;
+    const previousLikesCount = currentLikesCount;
+    const nextIsLiked = !previousIsLiked;
+    const nextLikesCount = Math.max(
+      0,
+      previousLikesCount + (nextIsLiked ? 1 : -1),
+    );
+
+    setLiked(nextIsLiked);
+    setCurrentLikesCount(nextLikesCount);
+    setIsLikePending(true);
+
+    try {
+      const result = await fetcher(`/api/tweets/${tweetId}/likes`, {
+        method: previousIsLiked ? "DELETE" : "POST",
+      });
+
+      const resolvedIsLiked = result?.data?.isLiked ?? nextIsLiked;
+      const resolvedLikesCount = Number.isFinite(result?.data?.likesCount)
+        ? result.data.likesCount
+        : nextLikesCount;
+
+      setLiked(resolvedIsLiked);
+      setCurrentLikesCount(resolvedLikesCount);
+      onLikeChange?.(tweetId, {
+        isLiked: resolvedIsLiked,
+        likesCount: resolvedLikesCount,
+        previousIsLiked,
+        previousLikesCount,
+      });
+    } catch (err) {
+      setLiked(previousIsLiked);
+      setCurrentLikesCount(previousLikesCount);
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsLikePending(false);
+    }
+  };
 
   const addPostToBookmarks = async (tweetId) => {
     if (isBookmarkPending) {
@@ -176,9 +236,20 @@ const TweetCard = ({
             <span>{retweets}</span>
           </button>
 
-          <button className={`${actionBaseClass} hover:text-x-red`}>
-            <span className="group-hover:bg-x-red/10 inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200">
-              <Heart className="size-4" />
+          <button
+            type="button"
+            disabled={isLikePending}
+            onClick={() => toggleLike(_id)}
+            className={`${actionBaseClass} ${isLiked ? "text-x-red" : "hover:text-x-red"} disabled:cursor-not-allowed disabled:opacity-70`}
+          >
+            <span
+              className={`${isLiked ? "bg-x-red/10" : "group-hover:bg-x-red/10"} inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200`}
+            >
+              <Heart
+                className={
+                  isLiked ? "text-x-red fill-x-red size-4" : "size-4"
+                }
+              />
             </span>
             <span>{likes}</span>
           </button>
