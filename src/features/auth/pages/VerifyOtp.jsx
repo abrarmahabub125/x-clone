@@ -104,16 +104,19 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 flex h-screen w-full items-center justify-center gap-x-40">
+    <div className="fixed top-0 left-0 flex h-screen w-full flex-col items-center justify-center gap-x-40 p-5 lg:flex-row">
       <div>
         <img
           src={XLogo}
           alt="Twitter Logo"
-          className="mx-auto mb-6 h-52 w-52 object-contain"
+          className="mx-auto mb-4 h-8 w-8 object-contain lg:mb-6 lg:h-58 lg:w-58"
         />
       </div>
 
       <div className="max-w-md space-y-5">
+        <h1 className="text-x-text mb-8 text-center text-lg font-medium lg:text-3xl lg:font-semibold">
+          Verify E-mail
+        </h1>
         <div className="border-x-divider from-x-surface to-x-bg rounded-2xl border bg-linear-to-b p-5">
           <p className="text-x-text-sec text-sm leading-6">
             We sent a 6-digit security code to your email. Please enter the code
@@ -161,14 +164,14 @@ const VerifyOtp = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-x-bgOpposite text-x-textOpposite flex w-full items-center justify-center rounded-full px-4 py-3 text-[15px] font-bold transition-opacity duration-200 hover:opacity-95 disabled:opacity-60"
+              className="bg-x-bgOpposite text-x-textOpposite flex w-full items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-opacity duration-200 hover:opacity-95 disabled:opacity-60 lg:py-3 lg:text-[15px] lg:font-bold"
             >
               {isSubmitting ? <Spinner /> : "Verify and continue"}
             </button>
 
             <button
               type="button"
-              className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-semibold transition-colors duration-200"
+              className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200 lg:py-2.5 lg:text-[15px]"
             >
               Resend OTP
             </button>

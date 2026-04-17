@@ -7,7 +7,7 @@ import { loginSchema } from "../../../shared/validations/loginSchema.js";
 import { useAuth } from "../hooks/useAuth";
 
 const inputClassName =
-  "border-x-divider text-x-text placeholder:text-x-text-sec focus:border-x-blue w-full rounded-md border bg-transparent px-3 py-4 text-base outline-none transition";
+  "border-x-divider text-x-text placeholder:text-x-text-sec focus:border-x-blue w-full rounded-md border bg-transparent py-2.5 px-3 lg:px-4 lg:py-3.5 text-sm  lg:text-base outline-none transition";
 
 const errorClassName = "mt-1 text-sm text-red-500";
 
@@ -22,6 +22,7 @@ const LoginPage = () => {
   });
   const [submitMessage, setSubmitMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPass, setShowPass] = useState(false);
 
   const navigate = useNavigate();
   const { refetchUser } = useAuth();
@@ -97,18 +98,24 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4">
-      <div className="text-x-text mb-6 flex items-center gap-4 text-3xl font-semibold">
-        Sign in to
-        <img className="size-8" src={XLogo} alt="logo" />
+    <div className="fixed top-0 left-0 flex h-screen w-full flex-col items-center justify-center gap-x-40 p-6 lg:flex-row lg:p-0">
+      <div className="text-x-text mb-6 flex flex-col items-center gap-4 text-3xl font-semibold">
+        <img
+          className="mx-auto mb-4 h-8 w-8 object-contain lg:mb-6 lg:h-58 lg:w-58"
+          src={XLogo}
+          alt="logo"
+        />
       </div>
 
-      <div className="w-full max-w-md space-y-3">
-        <button className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-medium transition">
+      <div className="w-full max-w-sm space-y-3">
+        <h1 className="text-x-text mb-8 text-center text-lg font-medium lg:text-3xl lg:font-semibold">
+          Sign In
+        </h1>
+        <button className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition lg:py-2.5 lg:text-[15px]">
           Sign in with Google
         </button>
 
-        <button className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-bold transition">
+        <button className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition lg:py-2.5 lg:text-[15px]">
           Sign in with Apple
         </button>
 
@@ -135,17 +142,25 @@ const LoginPage = () => {
           </div>
 
           <div>
-            <input
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              autoComplete="off"
-              placeholder="Password"
-              className={`${inputClassName} ${
-                errors.password ? "border-red-500" : ""
-              }`}
-            />
+            <div className="relative">
+              <input
+                name="password"
+                type={showPass ? "text" : "password"}
+                value={formData.password}
+                onChange={handleInputChange}
+                autoComplete="off"
+                placeholder="Password"
+                className={`${inputClassName} ${
+                  errors.password ? "border-red-500" : ""
+                }`}
+              />
+              <span
+                onClick={() => setShowPass(!showPass)}
+                className="absolute top-1/2 right-3.5 -translate-y-1/2 lg:right-4"
+              >
+                O
+              </span>
+            </div>
             {errors.password && (
               <p className={errorClassName}>{errors.password}</p>
             )}
@@ -166,29 +181,29 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={!isFormValid || isSubmitting}
-            className="bg-x-bgOpposite text-x-textOpposite mt-2 flex w-full items-center justify-center rounded-full px-4 py-2.5 text-[15px] font-bold transition hover:opacity-95 disabled:opacity-70"
+            className="bg-x-bgOpposite text-x-textOpposite mt-2 flex w-full items-center justify-center rounded-full px-4 py-2 text-sm font-bold transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50 lg:py-2.5 lg:text-base"
           >
             {isSubmitting ? <Spinner /> : "Login"}
           </button>
         </form>
 
-        <button className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-bold transition">
+        <button className="border-x-divider text-x-text hover:bg-x-surface flex w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition lg:py-2.5 lg:text-[15px]">
           Forgot password?
         </button>
 
         <div className="mt-6 text-center">
-          <p className="text-x-text-sec text-[15px]">
+          <p className="text-x-text-sec text-sm lg:text-[15px]">
             Don&apos;t have an account?
           </p>
           <Link
             to="/register"
-            className="border-x-divider text-x-blue hover:bg-x-surface mt-2 inline-flex w-full items-center justify-center rounded-full border px-4 py-2.5 text-[15px] font-bold transition"
+            className="border-x-divider text-x-blue hover:bg-x-surface mt-3 flex w-full items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition lg:py-2.5 lg:text-[15px]"
           >
             Create account
           </Link>
         </div>
 
-        <p className="text-x-text-sec mt-10 text-center text-[13px]">
+        <p className="text-x-text-sec mt-10 text-left text-[13px]">
           By signing in, you agree to the Terms of Service and Privacy Policy.
         </p>
       </div>

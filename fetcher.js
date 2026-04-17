@@ -30,9 +30,7 @@ export async function fetcher(path, options = {}) {
   const payload = await response.json().catch(() => null);
 
   if (!response.ok || payload?.success === false) {
-    throw new Error(
-      payload?.message || `Request failed with status ${response.status}.`,
-    );
+    throw new Error(payload?.message || `Something went wrong! Try again.`);
   }
 
   return payload;

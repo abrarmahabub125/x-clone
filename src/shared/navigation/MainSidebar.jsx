@@ -16,6 +16,7 @@ import TweetIcon from "../assets/tweet-icon.jpg";
 import { useAuth } from "../../features/auth/hooks/useAuth";
 import MainLink from "./components/MainLink";
 import MorePopUp from "./components/MorePopUp";
+import ComposeTweet from "./components/ComposeTweet";
 
 const MainSidebar = () => {
   const [isAccountPopUpOpen, setIsAccountPopUpOpen] = useState(false);
@@ -89,14 +90,7 @@ const MainSidebar = () => {
               </span>
             </div>
           </Link>
-          <Link
-            to={composeHref}
-            className="bg-x-bgOpposite rounded-full lg:hidden"
-          >
-            <div className="bg-x-bgOpposite mt-8 flex size-12 w-full items-center justify-center overflow-hidden rounded-full transition-opacity duration-200 hover:opacity-95">
-              <img className="size-7 object-cover" src={TweetIcon} alt="icon" />
-            </div>
-          </Link>
+          <ComposeTweet composeHref={composeHref} tweetIcon={TweetIcon} />
         </div>
       </div>
 

@@ -1,26 +1,19 @@
 import { Link } from "react-router";
 import { Plus } from "lucide-react";
-import {
-  BookmarkIcon,
-  User2Icon,
-  UserPlus2Icon,
-  ListTodoIcon,
-  SquareArrowOutUpRightIcon,
-  Settings,
-  MicIcon,
-  ZapIcon,
-  LogOutIcon,
-} from "lucide-react";
+import { BookmarkIcon, User2Icon, Settings, LogOutIcon } from "lucide-react";
 import { useState } from "react";
-import MyImage from "../../../shared/assets/logo/my-photo.jpg";
 import XLogo from "../../../shared/assets/logo/x-logo.svg";
 import MobileLink from "../../../shared/navigation/components/MobileLink";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 const HeaderForPhone = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const { user } = useAuth();
+
+  const { id, fullName, username, profilePic } = user;
 
   return (
-    <div className="px-4 pt-2">
+    <div className="px-4 pt-2 md:hidden">
       <div className="grid w-full grid-cols-3 grid-rows-1 gap-x-4">
         <div className="flex items-center justify-start">
           <button
@@ -29,7 +22,10 @@ const HeaderForPhone = () => {
           >
             <img
               className="h-full w-full object-cover object-center"
-              src={MyImage}
+              src={
+                profilePic ||
+                "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+              }
               alt="profile-image"
             />
           </button>
@@ -40,7 +36,7 @@ const HeaderForPhone = () => {
           </Link>
         </div>
         <div className="flex items-center justify-end">
-          <button className="border-x-divider inline-block w-fit rounded-full border px-4 py-1.5">
+          <button className="border-x-divider inline-block w-fit rounded-full border px-4 py-2 text-xs">
             Subscribe
           </button>
         </div>
@@ -50,13 +46,16 @@ const HeaderForPhone = () => {
         onClick={() => setIsNavOpen(false)}
         className={`bg-x-bg/40 fixed top-0 left-0 h-screen w-full -translate-x-full transition-all duration-200 ${isNavOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="bg-x-bg shadow-x-text-ter border-x-divider h-full w-fit border-r p-3 shadow-2xl">
+        <div className="bg-x-bg border-x-divider h-full w-fit border-r p-3">
           <div>
             <div className="flex items-center justify-between px-1.5">
               <div className="border-x-divider size-10 overflow-hidden rounded-full border">
                 <img
                   className="h-full w-full rounded-full object-cover object-center"
-                  src={MyImage}
+                  src={
+                    profilePic ||
+                    "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+                  }
                   alt="profile-image"
                 />
               </div>
@@ -68,10 +67,10 @@ const HeaderForPhone = () => {
             </div>
             <div className="mt-1 flex flex-col justify-start px-1.5">
               <span className="text-x-text text-sm font-semibold sm:text-base">
-                Abrar Mahabub
+                {fullName}
               </span>
               <span className="text-x-text-sec -mt-0.5 text-xs sm:text-sm">
-                @abrar_mahabub
+                {username}
               </span>
             </div>
             <div className="mt-2 flex items-center gap-x-5 px-1.5">
@@ -96,39 +95,14 @@ const HeaderForPhone = () => {
 
           <div className="mt-6 flex flex-col gap-y-4">
             <MobileLink
-              path="/profile/123"
+              path={`/profile/${id}`}
               icon={<User2Icon className="size-6" />}
               label="Profile"
-            />
-            <MobileLink
-              path="/connect-people"
-              icon={<UserPlus2Icon className="size-6" />}
-              label="Follow"
             />
             <MobileLink
               path="/bookmarks"
               icon={<BookmarkIcon className="size-6" />}
               label="Bookmarks"
-            />
-            <MobileLink
-              path="/list"
-              icon={<ListTodoIcon className="size-6" />}
-              label="Lists"
-            />
-            <MobileLink
-              path="/ads-center"
-              icon={<SquareArrowOutUpRightIcon className="size-6" />}
-              label="Ads"
-            />
-            <MobileLink
-              path="/create-space"
-              icon={<MicIcon className="size-6" />}
-              label="Create your Space"
-            />
-            <MobileLink
-              path="/business"
-              icon={<ZapIcon className="size-6" />}
-              label="Business"
             />
             <MobileLink
               path="/settings"
