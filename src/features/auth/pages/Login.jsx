@@ -5,6 +5,7 @@ import XLogo from "../../../shared/assets/logo/x-logo.svg";
 import Spinner from "../../../shared/loaders/Spinner";
 import { loginSchema } from "../../../shared/validations/loginSchema.js";
 import { useAuth } from "../hooks/useAuth";
+import { Eye, EyeOff } from "lucide-react";
 
 const inputClassName =
   "border-x-divider text-x-text placeholder:text-x-text-sec focus:border-x-blue w-full rounded-md border bg-transparent py-2.5 px-3 lg:px-4 lg:py-3.5 text-sm  lg:text-base outline-none transition";
@@ -156,9 +157,9 @@ const LoginPage = () => {
               />
               <span
                 onClick={() => setShowPass(!showPass)}
-                className="absolute top-1/2 right-3.5 -translate-y-1/2 lg:right-4"
+                className="absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer transition-colors duration-200 lg:right-4"
               >
-                O
+                {showPass ? <Eye size={18} /> : <EyeOff size={18} />}
               </span>
             </div>
             {errors.password && (
