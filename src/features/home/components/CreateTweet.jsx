@@ -167,9 +167,9 @@ const CreateTweet = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-x-bgOpposite text-x-textOpposite cursor-pointer rounded-full px-4 py-1 font-medium outline-0 transition-all duration-200 active:scale-95 disabled:opacity-60"
+                className="bg-x-bgOpposite text-x-textOpposite cursor-pointer rounded-full px-4.5 py-1 text-sm font-medium outline-0 transition-all duration-200 active:scale-95 disabled:opacity-60"
               >
-                {loading ? <Spinner /> : <span>Post</span>}
+                {loading ? <span>Posting...</span> : <span>Post</span>}
               </button>
             </div>
           </div>

@@ -4,24 +4,42 @@ import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 import { updateTweetById } from "../../../shared/utils/tweetListState";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const NewsFeed = () => {
-  const [feedData, setFeedData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [cursor, setCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(null);
+  const [feedData, setFeedData] = useState([]);
 
-  useEffect(() => {
-    const fetchFeedData = async () => {
-      try {
-        const result = await fetcher("/api/feed/for-you");
-        setFeedData(result.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  // 🔥 FETCH FUNCTION
+  const fetchFeedData = async () => {
+    try {
+      const url = cursor
+        ? `/api/feed/for-you?cursor=${cursor}&limit=10`
+        : `/api/feed/for-you?limit=10`;
+
+      const result = await fetcher(url);
+
+      const newData = result.data || [];
+
+      // append data
+      setFeedData((prev) => [...prev, ...newData]);
+
+      // update cursor from backend
+      setCursor(result.nextCursor || null);
+
+      // stop if no more data
+      if (!result.nextCursor || newData.length === 0) {
+        setHasMore(false);
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
+  // initial load
+  useEffect(() => {
     fetchFeedData();
   }, []);
 
@@ -42,47 +60,33 @@ const NewsFeed = () => {
     );
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <Spinner />
-      </div>
-    );
-  }
-
   if (error) {
-    return (
-      <div>
-        <FetchError message={error} />
-      </div>
-    );
+    return <FetchError message={error} />;
   }
 
   return (
-    <div>
-      {feedData.length === 0 ? (
-        <div className="flex min-h-[40vh] items-center justify-center px-4">
-          <div className="w-full max-w-md rounded-2xl bg-transparent p-6 text-center">
-            <h2 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-              No tweets to show
-            </h2>
-
-            <p className="mb-5 text-sm text-gray-500 dark:text-gray-400">
-              Follow some users to see their tweets here.
-            </p>
-          </div>
+    <InfiniteScroll
+      dataLength={feedData.length}
+      next={fetchFeedData}
+      hasMore={hasMore}
+      loader={
+        <div className="flex justify-center py-12">
+          <Spinner />
         </div>
-      ) : (
-        feedData.map((tweet) => (
-          <TweetCard
-            key={tweet._id}
-            {...tweet}
-            onLikeChange={handleLikeChange}
-            onBookmarkChange={handleBookmarkChange}
-          />
-        ))
-      )}
-    </div>
+      }
+      endMessage={
+        <p className="text-x-text-sec py-4 text-center">No more tweets</p>
+      }
+    >
+      {feedData.map((tweet, idx) => (
+        <TweetCard
+          key={idx}
+          {...tweet}
+          onLikeChange={handleLikeChange}
+          onBookmarkChange={handleBookmarkChange}
+        />
+      ))}
+    </InfiniteScroll>
   );
 };
 
