@@ -10,7 +10,7 @@ const HeaderForPhone = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const { user } = useAuth();
 
-  const { id, fullName, username, profilePic } = user;
+  const { id, fullName, username, profilePic, followers, following } = user;
 
   return (
     <div className="px-4 pt-2 md:hidden">
@@ -76,7 +76,7 @@ const HeaderForPhone = () => {
             <div className="mt-2 flex items-center gap-x-5 px-1.5">
               <div className="flex items-center gap-x-1">
                 <span className="text-x-text text-xs font-medium sm:text-sm">
-                  0
+                  {following}
                 </span>
                 <span className="text-x-text-sec text-[11px] sm:text-xs">
                   Following
@@ -84,7 +84,7 @@ const HeaderForPhone = () => {
               </div>
               <div className="flex items-center gap-x-1">
                 <span className="text-x-text text-xs font-medium sm:text-sm">
-                  0
+                  {followers}
                 </span>
                 <span className="text-x-text-sec text-[11px] sm:text-xs">
                   Followers
