@@ -3,15 +3,17 @@ import SearchBar from "../../ui/SearchBar";
 import TodaysNews from "./TodaysNews";
 import WhatsHappening from "./WhatsHappening";
 import WhoToFollow from "./WhoToFollow";
+import { useSearch } from "../../../features/auth/hooks/useSearch";
 
 const SecondSidebar = () => {
   const location = useLocation();
+  const { searchQuery, setSearchQuery } = useSearch();
 
   return (
     <div className="flex h-full max-h-screen w-fit flex-col">
       {!location.pathname.startsWith("/explore") && (
         <div className="bg-x-bg sticky top-0 z-10 py-2">
-          <SearchBar />
+          <SearchBar query={searchQuery} setQuery={setSearchQuery} />
         </div>
       )}
 

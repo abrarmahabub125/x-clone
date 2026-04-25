@@ -13,7 +13,7 @@ const FollowHome = () => {
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
-        const response = await fetcher("/api/users/connect", {
+        const response = await fetcher("/api/users/who-to-follow?limit=10", {
           method: "GET",
         });
 
@@ -21,7 +21,9 @@ const FollowHome = () => {
         setError(null);
       } catch (fetchError) {
         console.error("Error fetching suggestions:", fetchError);
-        setError(fetchError.message || "Failed to load suggestions. Please try again.");
+        setError(
+          fetchError.message || "Failed to load suggestions. Please try again.",
+        );
       } finally {
         setLoading(false);
       }
@@ -33,6 +35,8 @@ const FollowHome = () => {
   if (error) {
     return <FetchError message={error} />;
   }
+
+  console.log(suggestions);
 
   return (
     <div>
@@ -69,4 +73,3 @@ const FollowHome = () => {
 };
 
 export default FollowHome;
-

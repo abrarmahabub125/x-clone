@@ -11,7 +11,7 @@ const WhoToFollow = () => {
   useEffect(() => {
     const fetchWhoToFollow = async () => {
       try {
-        const response = await fetcher("/api/users/who-to-follow", {
+        const response = await fetcher("/api/users/who-to-follow?limit=3", {
           method: "GET",
         });
 
@@ -67,4 +67,3 @@ const WhoToFollow = () => {
 };
 
 export default WhoToFollow;
-

@@ -6,16 +6,18 @@ import { fetcher } from "../../../../fetcher";
 import ForYou from "../components/ForYou";
 import FetchError from "../../../shared/ui/FetchError";
 import { updateTweetById } from "../../../shared/utils/tweetListState";
+import { useSearch } from "../../auth/hooks/useSearch";
 
 const ExplorePage = () => {
-  const [query, setQuery] = useState("");
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const { searchQuery, setSearchQuery } = useSearch();
+
   useEffect(() => {
     const delay = setTimeout(async () => {
-      if (!query) {
+      if (!searchQuery) {
         setResults(null);
         setError(null);
         setLoading(false);
@@ -25,7 +27,7 @@ const ExplorePage = () => {
       try {
         setLoading(true);
         const response = await fetcher(
-          `/api/explore/search?q=${encodeURIComponent(query)}`,
+          `/api/explore/search?q=${encodeURIComponent(searchQuery)}`,
         );
         setResults(response?.data ?? { users: [], tweets: [] });
         setError(null);
@@ -37,7 +39,7 @@ const ExplorePage = () => {
     }, 400);
 
     return () => clearTimeout(delay);
-  }, [query]);
+  }, [searchQuery]);
 
   const handleLikeChange = (tweetId, change) => {
     setResults((currentResults) => {
@@ -72,7 +74,7 @@ const ExplorePage = () => {
 
   return (
     <div>
-      <ExploreHeader query={query} setQuery={setQuery} />
+      <ExploreHeader query={searchQuery} setQuery={setSearchQuery} />
 
       {error && <FetchError message={error} />}
 

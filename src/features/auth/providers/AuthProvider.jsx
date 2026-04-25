@@ -16,7 +16,10 @@ const AuthProvider = ({ children }) => {
       });
       setUser(response?.data?.user ?? null);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      // Don't log error for 401 (not authenticated) - this is expected
+      if (error?.status !== 401) {
+        console.error("Error fetching user data:", error);
+      }
       setUser(null);
     } finally {
       setIsLoading(false);
