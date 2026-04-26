@@ -12,7 +12,7 @@ import FollowButton from "../../../shared/ui/FollowButton";
 import { formatNumber } from "../../../shared/utils/formatNumber";
 
 const FALLBACK_PROFILE_PIC =
-  "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg";
+  "https://i.ibb.co.com/jZZHbNL5/male-default-placeholder-avatar-profile-gray-picture-isolated-on-background-man-silhouette-picture-f.jpg";
 const PROFILE_COVER_FALLBACK_CLASS =
   "bg-[radial-gradient(circle_at_top_left,#38bdf8_0%,transparent_35%),linear-gradient(135deg,#082f49_0%,#0f766e_48%,#111827_100%)]";
 
@@ -97,7 +97,7 @@ const UserProfilePage = () => {
       </PageHeader>
 
       <section>
-        <div className="h-44 w-full overflow-hidden">
+        <div className="h-40 w-full overflow-hidden lg:h-44">
           {profile.coverPhoto ? (
             <img
               className="h-full w-full object-cover object-center"
@@ -111,7 +111,7 @@ const UserProfilePage = () => {
 
         <div className="px-4 pb-4">
           <div className="flex items-end justify-between gap-4">
-            <div className="border-x-bg bg-x-bg -mt-20 size-32 overflow-hidden rounded-full border-4">
+            <div className="border-x-bg bg-x-bg -mt-32 size-28 overflow-hidden rounded-full border-4 md:size-30 lg:-mt-20 lg:size-32">
               <img
                 className="h-full w-full object-cover object-center"
                 src={
@@ -124,14 +124,14 @@ const UserProfilePage = () => {
             <div className="mt-3 flex items-center gap-3">
               <button
                 type="button"
-                className="hover:bg-x-surface border-x-divider inline-flex size-9 cursor-pointer items-center justify-center rounded-full border transition-colors duration-200"
+                className="hover:bg-x-surface border-x-divider inline-flex size-8.5 cursor-pointer items-center justify-center rounded-full border transition-colors duration-200 lg:size-9"
               >
-                <MoreHorizontal className="size-5" />
+                <MoreHorizontal className="size-4 lg:size-5" />
               </button>
               {isOwnProfile ? (
                 <button
                   type="button"
-                  className="border-x-divider hover:bg-x-surface rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200"
+                  className="border-x-divider hover:bg-x-surface rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-200 lg:text-sm"
                   onClick={() => setIsEditModalOpen(true)}
                 >
                   Edit profile
@@ -144,7 +144,7 @@ const UserProfilePage = () => {
 
           <div className="mt-3">
             <div className="flex items-center gap-1.5">
-              <h2 className="text-x-text text-xl font-extrabold sm:text-2xl">
+              <h2 className="text-x-text text-xl font-bold md:text-2xl">
                 {profileName}
               </h2>
             </div>
@@ -155,20 +155,22 @@ const UserProfilePage = () => {
 
           <div className="mt-3 max-w-2xl space-y-3">
             {profile.bio && (
-              <p className="text-x-text text-[15px] leading-6">{profile.bio}</p>
+              <p className="text-x-text text-sm leading-6 lg:text-[15px]">
+                {profile.bio}
+              </p>
             )}
 
             <div className="text-x-text-sec flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
               {profile.location && (
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="size-4" />
-                  <span>{profile.location}</span>
+                  <MapPin className="size-3.5 lg:size-4" />
+                  <span className="text-xs lg:text-sm">{profile.location}</span>
                 </div>
               )}
 
               <div className="flex items-center gap-1.5">
-                <CalendarDays className="size-4" />
-                <span>{`Joined ${joinedAtLabel}`}</span>
+                <CalendarDays className="size-3.5 lg:size-4" />
+                <span className="text-xs lg:text-sm">{`Joined ${joinedAtLabel}`}</span>
               </div>
             </div>
 

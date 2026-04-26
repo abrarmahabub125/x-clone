@@ -9,6 +9,7 @@ import {
   removeTweetById,
   updateTweetById,
 } from "../../../shared/utils/tweetListState";
+import { BookmarkIcon } from "lucide-react";
 
 const BookMarkPage = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -89,11 +90,14 @@ const BookMarkPage = () => {
               ))}
             </div>
           ) : (
-            <div className="py-12 text-center">
-              <h1 className="text-x-text text-4xl font-bold">
+            <div className="px-4 py-12 text-center">
+              <div className="bg-x-primary/10 text-x-primary mx-auto mb-4 flex w-max items-center justify-center rounded-full p-3">
+                <BookmarkIcon className="text-x-blue size-8 md:size-10 lg:size-12" />
+              </div>
+              <h1 className="text-x-text text-lg font-semibold md:text-xl lg:text-4xl lg:font-bold">
                 Save post for later
               </h1>
-              <p className="text-x-text-sec mt-4 text-sm">
+              <p className="text-x-text-sec mt-2.5 text-sm md:text-base lg:mt-4 lg:text-lg">
                 Bookmark posts to easily find them again in the future.
               </p>
             </div>

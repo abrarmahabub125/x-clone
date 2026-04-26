@@ -97,7 +97,7 @@ const CreateTweet = () => {
               className="h-full w-full object-cover object-center"
               src={
                 user?.profilePic ||
-                "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+                "https://i.ibb.co.com/jZZHbNL5/male-default-placeholder-avatar-profile-gray-picture-isolated-on-background-man-silhouette-picture-f.jpg"
               }
               alt="profile-image"
             />

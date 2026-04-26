@@ -43,6 +43,12 @@ const WhoToFollow = () => {
           <div className="flex min-h-44 items-center justify-center">
             <Spinner />
           </div>
+        ) : whoToFollow.length === 0 ? (
+          <div className="flex min-h-32 items-center justify-center">
+            <span className="text-x-text-sec text-sm">
+              No suggestions available
+            </span>
+          </div>
         ) : (
           whoToFollow.map((user) => (
             <WhoToFollowCard

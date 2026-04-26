@@ -1,10 +1,11 @@
+import { useState } from "react";
 import ProfileTimeline from "../components/ProfileTimeline";
-import { profileReplies } from "../data/profileData";
 
 const ProfileRepliesPage = () => {
+  const [replies, setReplies] = useState([]);
   return (
     <ProfileTimeline
-      posts={profileReplies}
+      posts={replies}
       emptyTitle="No replies yet"
       emptyDescription="Replies and conversations from this account will show up here."
     />

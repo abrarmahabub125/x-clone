@@ -9,7 +9,10 @@ import {
 } from "./followStatusStore";
 import toast from "react-hot-toast";
 
-const FollowButton = ({ userId, styles = "text-base h-9 px-5" }) => {
+const FollowButton = ({
+  userId,
+  styles = "text-sm lg:text-base h-8 px-4 lg:h-9 lg:px-5",
+}) => {
   const [isFollowing, setFollowing] = useState(() => getFollowStatus(userId));
   const [isProcessing, setProcessing] = useState(false);
 

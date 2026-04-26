@@ -5,7 +5,7 @@ import FollowButton from "../../ui/FollowButton";
 const WhoToFollowCard = ({ userId, fullName, username, profilePic }) => {
   const avatarUrl = profilePic
     ? profilePic
-    : "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg";
+    : "https://i.ibb.co.com/jZZHbNL5/male-default-placeholder-avatar-profile-gray-picture-isolated-on-background-man-silhouette-picture-f.jpg";
   return (
     <div className="flex w-full items-center justify-between gap-3 px-4">
       <div className="flex min-w-0 items-center gap-3">

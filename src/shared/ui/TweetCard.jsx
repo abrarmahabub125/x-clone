@@ -154,7 +154,7 @@ const TweetCard = ({
             src={
               profilePic
                 ? profilePic
-                : "https://i.ibb.co.com/MYd59yV/man-professional-business-casual-young-avatar-icon-illustration-1277826-627.jpg"
+                : "https://i.ibb.co.com/jZZHbNL5/male-default-placeholder-avatar-profile-gray-picture-isolated-on-background-man-silhouette-picture-f.jpg"
             }
             alt={`${fullName} avatar`}
           />
@@ -246,9 +246,7 @@ const TweetCard = ({
               className={`${isLiked ? "bg-x-red/10" : "group-hover:bg-x-red/10"} inline-flex size-8 items-center justify-center rounded-full transition-colors duration-200`}
             >
               <Heart
-                className={
-                  isLiked ? "text-x-red fill-x-red size-4" : "size-4"
-                }
+                className={isLiked ? "text-x-red fill-x-red size-4" : "size-4"}
               />
             </span>
             <span>{likes}</span>

@@ -18,7 +18,7 @@ const ForYou = ({ results, onLikeChange, onBookmarkChange }) => {
         </h2>
 
         <p className="text-x-text-sec mt-2 max-w-md text-xs lg:text-sm">
-          Search for people, posts, or topics.
+          Search people, posts, topics, or keywords
         </p>
       </div>
     );

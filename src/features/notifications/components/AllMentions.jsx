@@ -1,31 +1,15 @@
 import NotificationCard from "./NotificationCard";
 
-const mentions = [
-  {
-    id: 1,
-    type: "mention",
-    actor: "Design Daily",
-    handle: "design_daily",
-    time: "12m",
-    text:
-      "mentioned you: \"@abrar_mahabub this X clone layout polish is getting really close.\"",
-  },
-  {
-    id: 2,
-    type: "mention",
-    actor: "Nadia Visuals",
-    handle: "nadiavisuals",
-    time: "2h",
-    text:
-      "mentioned you in a conversation about profile page spacing and content density.",
-    secondaryText:
-      "They called out your header and card improvements specifically.",
-  },
-];
+const mentions = [];
 
 const AllMentions = () => {
   return (
     <div className="flex min-h-fit w-full flex-col justify-start">
+      {mentions.length === 0 && (
+        <div className="text-x-text-sec flex h-20 w-full items-center justify-center text-xs md:text-sm lg:text-base">
+          No mentions yet.
+        </div>
+      )}
       {mentions.map((mention) => (
         <NotificationCard key={mention.id} {...mention} />
       ))}
