@@ -1,6 +1,9 @@
+import { useAuth } from "../../../features/auth/hooks/useAuth";
 import MyImage from "../../assets/logo/my-photo.jpg";
 
 const TodayNewsCard = () => {
+  const { user } = useAuth();
+
   return (
     <div>
       <div>
@@ -13,21 +16,21 @@ const TodayNewsCard = () => {
           <div className="border-x-surface relative h-fit w-fit rounded-full border">
             <img
               className="z-30 size-5 rounded-full object-cover object-center"
-              src={MyImage}
+              src={user.profilePic}
               alt="user_image"
             />
           </div>
           <div className="border-x-surface relative -ml-1.5 h-fit w-fit rounded-full border">
             <img
               className="z-20 size-5 rounded-full object-cover object-center"
-              src={MyImage}
+              src={user.profilePic}
               alt="user_image"
             />
           </div>
           <div className="border-x-surface relative -ml-1.5 h-fit w-fit rounded-full border">
             <img
               className="z-10 size-5 rounded-full object-cover object-center"
-              src={MyImage}
+              src={user.profilePic}
               alt="user_image"
             />
           </div>

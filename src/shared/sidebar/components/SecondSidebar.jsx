@@ -4,10 +4,12 @@ import TodaysNews from "./TodaysNews";
 import WhatsHappening from "./WhatsHappening";
 import WhoToFollow from "./WhoToFollow";
 import { useSearch } from "../../../features/auth/hooks/useSearch";
+import { useState } from "react";
 
 const SecondSidebar = () => {
   const location = useLocation();
   const { searchQuery, setSearchQuery } = useSearch();
+  const [todayNewsOpen, setTodayNewsOpen] = useState(true);
 
   return (
     <div className="flex h-full max-h-screen w-fit flex-col">
@@ -19,7 +21,12 @@ const SecondSidebar = () => {
 
       <div className="scrollbar-hide mt-4 flex w-fit flex-col gap-y-4 overflow-y-scroll">
         <div className="border-x-divider rounded-2xl border">
-          <TodaysNews />
+          {todayNewsOpen && (
+            <TodaysNews
+              todayNewsOpen={todayNewsOpen}
+              setTodayNewsOpen={setTodayNewsOpen}
+            />
+          )}
         </div>
         <div className="border-x-divider rounded-2xl border">
           {!location.pathname.startsWith("/explore") && (

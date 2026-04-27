@@ -140,3 +140,27 @@ input:-internal-autofill-selected {
     scrollbar-color: var(--color-x-divider) transparent;
   }
 }
+
+/* emoji picker styling  */
+emoji-picker {
+  width: 320px;
+  height: 300px;
+
+  --background: var(--color-x-surface);
+  --border-color: none;
+  --input-border-color: #2f3336;
+
+  --input-font-color: white;
+  --input-placeholder-color: #71767b;
+
+  --category-icon-color: #71767b;
+  --category-icon-active-color: #1d9bf0;
+
+  --indicator-color: #1d9bf0;
+
+  --emoji-size: 1.2rem;
+  --num-columns: 8;
+
+  border-radius: 16px;
+  overflow: hidden;
+}

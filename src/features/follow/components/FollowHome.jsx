@@ -36,8 +36,6 @@ const FollowHome = () => {
     return <FetchError message={error} />;
   }
 
-  console.log(suggestions);
-
   return (
     <div>
       {loading ? (
