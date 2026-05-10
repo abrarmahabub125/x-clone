@@ -1,73 +1,119 @@
-import ExploreHeader from "../components/ExploreHeader";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
+import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
-import { useState } from "react";
-import { useEffect } from "react";
-import { fetcher } from "../../../../fetcher";
-import ForYou from "../components/ForYou";
 import FetchError from "../../../shared/ui/FetchError";
-import { updateTweetById } from "../../../shared/utils/tweetListState";
+
 import { useSearch } from "../../auth/hooks/useSearch";
 
+import ExploreHeader from "../components/ExploreHeader";
+import ForYou from "../components/ForYou";
+
 const ExplorePage = () => {
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
 
   const { searchQuery, setSearchQuery } = useSearch();
 
-  useEffect(() => {
-    const delay = setTimeout(async () => {
-      if (!searchQuery) {
-        setResults(null);
-        setError(null);
-        setLoading(false);
-        return;
-      }
+  // =========================
+  // Debounce State
+  // =========================
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-      try {
-        setLoading(true);
-        const response = await fetcher(
-          `/api/explore/search?q=${encodeURIComponent(searchQuery)}`,
-        );
-        setResults(response?.data ?? { users: [], tweets: [] });
-        setError(null);
-      } catch (e) {
-        setError(e.message || "Something went wrong!");
-      } finally {
-        setLoading(false);
-      }
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
     }, 400);
 
-    return () => clearTimeout(delay);
+    return () => clearTimeout(timeout);
   }, [searchQuery]);
 
+  // =========================
+  // Fetch Search Results
+  // =========================
+  const findResults = async () => {
+    if (!debouncedSearch) {
+      return {
+        data: {
+          users: [],
+          tweets: [],
+        },
+      };
+    }
+
+    const res = await axiosInstance.get(
+      `/explore/search?q=${encodeURIComponent(debouncedSearch)}`,
+    );
+
+    return res.data;
+  };
+
+  const {
+    data: results,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["explore", debouncedSearch],
+    queryFn: findResults,
+    enabled: !!debouncedSearch,
+    staleTime: 30 * 1000,
+    gcTime: 1 * 60 * 1000,
+  });
+
+  // =========================
+  // Update Tweet Helper
+  // =========================
+  const updateTweetById = (tweets, tweetId, updates) => {
+    return tweets.map((tweet) =>
+      tweet._id === tweetId
+        ? {
+            ...tweet,
+            ...updates,
+          }
+        : tweet,
+    );
+  };
+
+  // =========================
+  // Like Handler
+  // =========================
   const handleLikeChange = (tweetId, change) => {
-    setResults((currentResults) => {
-      if (!currentResults) {
-        return currentResults;
+    queryClient.setQueryData(["explore", debouncedSearch], (currentData) => {
+      if (!currentData) {
+        return currentData;
       }
 
       return {
-        ...currentResults,
-        tweets: updateTweetById(currentResults.tweets ?? [], tweetId, {
-          isLiked: change.isLiked,
-          likesCount: change.likesCount,
-        }),
+        ...currentData,
+        data: {
+          ...currentData.data,
+          tweets: updateTweetById(currentData.data.tweets ?? [], tweetId, {
+            isLiked: change.isLiked,
+            likesCount: change.likesCount,
+          }),
+        },
       };
     });
   };
 
+  // =========================
+  // Bookmark Handler
+  // =========================
   const handleBookmarkChange = (tweetId, nextIsBookmarked) => {
-    setResults((currentResults) => {
-      if (!currentResults) {
-        return currentResults;
+    queryClient.setQueryData(["explore", debouncedSearch], (currentData) => {
+      if (!currentData) {
+        return currentData;
       }
 
       return {
-        ...currentResults,
-        tweets: updateTweetById(currentResults.tweets ?? [], tweetId, {
-          isBookmarked: nextIsBookmarked,
-        }),
+        ...currentData,
+        data: {
+          ...currentData.data,
+          tweets: updateTweetById(currentData.data.tweets ?? [], tweetId, {
+            isBookmarked: nextIsBookmarked,
+          }),
+        },
       };
     });
   };
@@ -76,16 +122,18 @@ const ExplorePage = () => {
     <div>
       <ExploreHeader query={searchQuery} setQuery={setSearchQuery} />
 
-      {error && <FetchError message={error} />}
+      {isError && (
+        <FetchError message={error?.message || "Something went wrong!"} />
+      )}
 
-      {loading ? (
+      {isLoading ? (
         <div className="flex justify-center py-4">
           <Spinner />
         </div>
       ) : (
         <div>
           <ForYou
-            results={results}
+            results={results?.data}
             onLikeChange={handleLikeChange}
             onBookmarkChange={handleBookmarkChange}
           />

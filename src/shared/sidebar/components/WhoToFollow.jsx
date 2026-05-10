@@ -1,31 +1,29 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { fetcher } from "../../../../fetcher";
+import { axiosInstance } from "../../lib/axiosInstance";
 import Spinner from "../../loaders/Spinner";
 import WhoToFollowCard from "./WhoToFollowCard";
 
 const WhoToFollow = () => {
-  const [whoToFollow, setWhoToFollow] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: whoToFollow,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["who-to-follow"],
+    queryFn: async () =>
+      axiosInstance.get("/users/who-to-follow?limit=3").then((res) => res.data),
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    cacheTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
+  });
 
-  useEffect(() => {
-    const fetchWhoToFollow = async () => {
-      try {
-        const response = await fetcher("/api/users/who-to-follow?limit=3", {
-          method: "GET",
-        });
-
-        setWhoToFollow(response?.data ?? []);
-      } catch (error) {
-        console.error("Error fetching who to follow:", error);
-        setWhoToFollow([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWhoToFollow();
-  }, []);
+  if (isError) {
+    return (
+      <div className="flex min-h-44 items-center justify-center text-sm text-red-600">
+        {"Failed to load suggestions"}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -39,18 +37,18 @@ const WhoToFollow = () => {
         </div>
       </div>
       <div className="mt-1 flex flex-col gap-y-4 pb-3">
-        {loading ? (
+        {isLoading ? (
           <div className="flex min-h-44 items-center justify-center">
             <Spinner />
           </div>
-        ) : whoToFollow.length === 0 ? (
+        ) : whoToFollow?.data.length === 0 ? (
           <div className="flex min-h-32 items-center justify-center">
-            <span className="text-x-text-sec text-sm">
+            <span className="text-x-text-sec text-sm lg:text-base">
               No suggestions available
             </span>
           </div>
         ) : (
-          whoToFollow.map((user) => (
+          whoToFollow?.data.map((user) => (
             <WhoToFollowCard
               key={user.userId}
               userId={user.userId}
