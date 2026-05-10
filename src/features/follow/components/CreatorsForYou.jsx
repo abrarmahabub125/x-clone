@@ -19,6 +19,8 @@ const CreatorsForYou = () => {
     cacheTime: 1000 * 60 * 10, // 10 minutes
   });
 
+  const creatorList = Array.isArray(creators) ? creators : creators?.data ?? [];
+
   if (isError) {
     return <FetchError message={error} />;
   }
@@ -36,8 +38,8 @@ const CreatorsForYou = () => {
             subtitle="Popular creators in design, frontend, and product conversations"
           />
           <div>
-            {creators && creators.length > 0 ? (
-              creators.map((creator) => (
+            {creatorList.length > 0 ? (
+              creatorList.map((creator) => (
                 <FollowSuggestionCard
                   key={creator.userId ?? creator._id}
                   {...creator}

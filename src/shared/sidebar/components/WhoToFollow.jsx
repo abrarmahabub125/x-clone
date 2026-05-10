@@ -17,6 +17,10 @@ const WhoToFollow = () => {
     cacheTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
   });
 
+  const suggestionList = Array.isArray(whoToFollow)
+    ? whoToFollow
+    : whoToFollow?.data ?? [];
+
   if (isError) {
     return (
       <div className="flex min-h-44 items-center justify-center text-sm text-red-600">
@@ -41,14 +45,14 @@ const WhoToFollow = () => {
           <div className="flex min-h-44 items-center justify-center">
             <Spinner />
           </div>
-        ) : whoToFollow?.data.length === 0 ? (
+        ) : suggestionList.length === 0 ? (
           <div className="flex min-h-32 items-center justify-center">
             <span className="text-x-text-sec text-sm lg:text-base">
               No suggestions available
             </span>
           </div>
         ) : (
-          whoToFollow?.data.map((user) => (
+          suggestionList.map((user) => (
             <WhoToFollowCard
               key={user.userId}
               userId={user.userId}

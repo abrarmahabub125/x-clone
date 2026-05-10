@@ -24,7 +24,8 @@ const ForYou = ({ results, onLikeChange, onBookmarkChange }) => {
     );
   }
 
-  const { users, tweets } = results;
+  const users = Array.isArray(results?.users) ? results.users : [];
+  const tweets = Array.isArray(results?.tweets) ? results.tweets : [];
 
   if (users.length < 1 && tweets.length < 1)
     return (

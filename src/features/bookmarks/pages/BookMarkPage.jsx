@@ -26,6 +26,10 @@ const BookMarkPage = () => {
     queryFn: fetchBookmarks,
   });
 
+  const bookmarkItems = Array.isArray(bookmarks)
+    ? bookmarks
+    : bookmarks?.data ?? [];
+
   const queryClient = useQueryClient();
 
   const handleBookmarkChange = (tweetId, nextIsBookmarked) => {
@@ -78,9 +82,9 @@ const BookMarkPage = () => {
             <div className="py-12 text-center">
               <Spinner />
             </div>
-          ) : bookmarks.data.length > 0 ? (
+          ) : bookmarkItems.length > 0 ? (
             <div className="divide-y">
-              {bookmarks.data.map((bookmark) => (
+              {bookmarkItems.map((bookmark) => (
                 <TweetCard
                   key={bookmark._id}
                   {...bookmark}

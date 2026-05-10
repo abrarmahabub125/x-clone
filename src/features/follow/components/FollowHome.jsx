@@ -21,6 +21,10 @@ const FollowHome = () => {
     cacheTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
+  const suggestionList = Array.isArray(suggestedUsers)
+    ? suggestedUsers
+    : suggestedUsers?.data ?? [];
+
   if (isError) {
     return <FetchError message={error} />;
   }
@@ -38,8 +42,8 @@ const FollowHome = () => {
             subtitle="Accounts you might want to follow based on product, design, and frontend interests"
           />
           <div>
-            {suggestedUsers.data?.length > 0 ? (
-              suggestedUsers.data.map((profile) => (
+            {suggestionList.length > 0 ? (
+              suggestionList.map((profile) => (
                 <FollowSuggestionCard
                   key={profile.userId ?? profile._id}
                   {...profile}
