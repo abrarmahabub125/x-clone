@@ -1,35 +1,27 @@
-import { useState } from "react";
-import ProfileTimeline from "../components/ProfileTimeline";
-import { useEffect } from "react";
-import { fetcher } from "../../../../fetcher";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
+import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import ProfileTimeline from "../components/ProfileTimeline";
+
+// /api/users/${userId}/medias
 
 const ProfileMediaPage = () => {
-  const [medias, setMedias] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { userId } = useParams();
+  const {
+    data: medias,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["profileMedias", userId],
+    queryFn: () =>
+      axiosInstance.get(`/users/${userId}/medias`).then((res) => res.data),
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
 
-  useEffect(() => {
-    const fetchMedias = async () => {
-      try {
-        setLoading(true);
-        const mediaData = await fetcher(`/api/users/${userId}/medias`);
-
-        setMedias(mediaData.data);
-      } catch (err) {
-        setError(err.message || "Something went wrong!");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMedias();
-  }, [userId]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center py-12">
         <Spinner />
@@ -37,13 +29,13 @@ const ProfileMediaPage = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return <FetchError message={error} />;
   }
 
   return (
     <ProfileTimeline
-      posts={medias}
+      posts={medias.data}
       emptyTitle="Nothing to show here yet."
       emptyDescription="Photos and videos shared from this account will appear here."
     />

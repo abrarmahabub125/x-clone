@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import TweetCard from "../../../shared/ui/TweetCard";
+import { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import TweetCard from "../../../shared/ui/TweetCard";
 import { updateTweetById } from "../../../shared/utils/tweetListState";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const NewsFeed = () => {
   const [cursor, setCursor] = useState(null);
@@ -12,7 +12,6 @@ const NewsFeed = () => {
   const [error, setError] = useState(null);
   const [feedData, setFeedData] = useState([]);
 
-  // 🔥 FETCH FUNCTION
   const fetchFeedData = async () => {
     try {
       const url = cursor

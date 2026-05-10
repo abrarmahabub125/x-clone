@@ -1,39 +1,30 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { fetcher } from "../../../../fetcher";
-import { useAuth } from "../../auth/hooks/useAuth";
+import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import { useAuth } from "../../auth/hooks/useAuth";
 import ProfileTimeline from "../components/ProfileTimeline";
 
 const ProfileLikesPage = () => {
-  const [likes, setLikes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const { userId } = useParams();
   const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchLikes = async () => {
-      try {
-        setLoading(true);
-        const response = await fetcher(`/api/users/${userId}/likes`, {
-          method: "GET",
-        });
+  ///users/${userId}/likes
 
-        setLikes(response?.data ?? []);
-        setError(null);
-      } catch (fetchError) {
-        setError(fetchError.message || "Failed to load likes. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {
+    data: likes,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["profile-likes", userId],
+    queryFn: () =>
+      axiosInstance.get(`/users/${userId}/likes`).then((res) => res.data),
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
 
-    fetchLikes();
-  }, [userId]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="px-6 py-12">
         <Spinner />
@@ -41,14 +32,14 @@ const ProfileLikesPage = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return <FetchError message={error} />;
   }
 
   return (
     <div className="pb-24">
       <ProfileTimeline
-        posts={likes}
+        posts={likes.data}
         removeOnUnlike={user?.id === userId}
         emptyTitle="No likes yet"
         emptyDescription="Posts liked by this account will be listed here."

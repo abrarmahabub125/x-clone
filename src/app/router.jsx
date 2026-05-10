@@ -1,7 +1,7 @@
-﻿import { createBrowserRouter } from "react-router";
-import { lazy } from "react";
-import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
+﻿import { lazy } from "react";
+import { createBrowserRouter } from "react-router";
 import { fetcher } from "../../fetcher";
+import ProtectedRoute from "../features/auth/routes/ProtectedRoute";
 
 const VerifyOtp = lazy(() => import("../features/auth/pages/VerifyOtp"));
 const LoginPage = lazy(() => import("../features/auth/pages/Login"));

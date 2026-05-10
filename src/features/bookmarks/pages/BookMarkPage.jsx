@@ -1,70 +1,70 @@
-import { useEffect, useState } from "react";
-import { fetcher } from "../../../../fetcher";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { BookmarkIcon } from "lucide-react";
+import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import TweetCard from "../../../shared/ui/TweetCard";
 import { useAuth } from "../../auth/hooks/useAuth";
 import BookmarkHeader from "../components/BookmarkHeader";
-import TweetCard from "../../../shared/ui/TweetCard";
-import {
-  removeTweetById,
-  updateTweetById,
-} from "../../../shared/utils/tweetListState";
-import { BookmarkIcon } from "lucide-react";
 
 const BookMarkPage = () => {
-  const [bookmarks, setBookmarks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchBookmarks = async () => {
-      if (!user?.id) {
-        setBookmarks([]);
-        setLoading(false);
-        return;
-      }
+  const fetchBookmarks = () => {
+    if (!user?.id) return;
+    const response = axiosInstance.get("/bookmarks").then((res) => res.data);
+    return response;
+  };
 
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetcher(`/api/bookmarks`, {
-          method: "GET",
-        });
+  const {
+    data: bookmarks = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["bookmarks"],
+    queryFn: fetchBookmarks,
+  });
 
-        setBookmarks(response?.data ?? []);
-      } catch (fetchError) {
-        console.error("Error fetching bookmarks:", fetchError);
-        setError(
-          fetchError.message ||
-            "Failed to load bookmarks. Please try again later.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookmarks();
-  }, [user?.id]);
+  const queryClient = useQueryClient();
 
   const handleBookmarkChange = (tweetId, nextIsBookmarked) => {
-    if (nextIsBookmarked) {
-      return;
-    }
+    queryClient.setQueryData(["bookmarks"], (prevBookmarks) => {
+      if (!prevBookmarks) return prevBookmarks;
 
-    setBookmarks((prevBookmarks) => removeTweetById(prevBookmarks, tweetId));
+      if (!nextIsBookmarked) {
+        return {
+          ...prevBookmarks,
+          data: prevBookmarks.data.filter(
+            (bookmark) => bookmark._id !== tweetId,
+          ),
+        };
+      }
+      return prevBookmarks;
+    });
   };
 
   const handleLikeChange = (tweetId, change) => {
-    setBookmarks((prevBookmarks) =>
-      updateTweetById(prevBookmarks, tweetId, {
-        isLiked: change.isLiked,
-        likesCount: change.likesCount,
-      }),
-    );
+    queryClient.setQueryData(["bookmarks"], (prevBookmarks) => {
+      if (!prevBookmarks) return prevBookmarks;
+
+      return {
+        ...prevBookmarks,
+
+        data: prevBookmarks.data.map((tweet) =>
+          tweet._id === tweetId
+            ? {
+                ...tweet,
+                isLiked: change.isLiked,
+                likesCount: change.likesCount,
+              }
+            : tweet,
+        ),
+      };
+    });
   };
 
-  if (error) {
+  if (isError) {
     return <FetchError message={error} />;
   }
 
@@ -74,13 +74,13 @@ const BookMarkPage = () => {
 
       <div>
         <div>
-          {loading ? (
+          {isLoading ? (
             <div className="py-12 text-center">
               <Spinner />
             </div>
-          ) : bookmarks.length > 0 ? (
+          ) : bookmarks.data.length > 0 ? (
             <div className="divide-y">
-              {bookmarks.map((bookmark) => (
+              {bookmarks.data.map((bookmark) => (
                 <TweetCard
                   key={bookmark._id}
                   {...bookmark}
