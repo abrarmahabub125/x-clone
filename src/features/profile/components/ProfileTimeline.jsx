@@ -17,6 +17,7 @@ function normalizeProfilePost(post) {
     createdAt: post.createdAt ?? post.time ?? "",
     isLiked: Boolean(post.isLiked),
     isBookmarked: Boolean(post.isBookmarked),
+    isRetweeted: Boolean(post.isRetweeted),
     user: post.user ?? {
       fullName: post.author ?? "Unknown User",
       username: post.handle ?? "",
@@ -30,6 +31,7 @@ const ProfileTimeline = ({
   emptyTitle = "No posts yet",
   emptyDescription = "Share your first post and start engaging.",
   removeOnUnlike = false,
+  onDeletePost,
 }) => {
   const [timelinePosts, setTimelinePosts] = useState(() =>
     posts.map(normalizeProfilePost),
@@ -60,6 +62,28 @@ const ProfileTimeline = ({
     );
   };
 
+  const handleViewChange = (tweetId, change) => {
+    setTimelinePosts((currentPosts) =>
+      updateTweetById(currentPosts, tweetId, {
+        viewsCount: change.viewsCount,
+      }),
+    );
+  };
+
+  const handleRetweetChange = (tweetId, change) => {
+    setTimelinePosts((currentPosts) =>
+      updateTweetById(currentPosts, tweetId, {
+        isRetweeted: change.isRetweeted,
+        retweetsCount: change.retweetsCount,
+      }),
+    );
+  };
+
+  const handleDelete = (tweetId) => {
+    setTimelinePosts((currentPosts) => removeTweetById(currentPosts, tweetId));
+    onDeletePost?.(tweetId);
+  };
+
   if (!timelinePosts.length) {
     return (
       <div className="px-6 py-12">
@@ -81,6 +105,9 @@ const ProfileTimeline = ({
           {...post}
           onLikeChange={handleLikeChange}
           onBookmarkChange={handleBookmarkChange}
+          onViewChange={handleViewChange}
+          onRetweetChange={handleRetweetChange}
+          onDelete={handleDelete}
         />
       ))}
     </div>

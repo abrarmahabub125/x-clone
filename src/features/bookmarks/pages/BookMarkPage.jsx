@@ -4,6 +4,7 @@ import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 import TweetCard from "../../../shared/ui/TweetCard";
+import { removeTweetById } from "../../../shared/utils/tweetListState";
 import { useAuth } from "../../auth/hooks/useAuth";
 import BookmarkHeader from "../components/BookmarkHeader";
 
@@ -68,6 +69,54 @@ const BookMarkPage = () => {
     });
   };
 
+  const handleViewChange = (tweetId, change) => {
+    queryClient.setQueryData(["bookmarks"], (prevBookmarks) => {
+      if (!prevBookmarks) return prevBookmarks;
+
+      return {
+        ...prevBookmarks,
+        data: prevBookmarks.data.map((tweet) =>
+          tweet._id === tweetId
+            ? {
+                ...tweet,
+                viewsCount: change.viewsCount,
+              }
+            : tweet,
+        ),
+      };
+    });
+  };
+
+  const handleRetweetChange = (tweetId, change) => {
+    queryClient.setQueryData(["bookmarks"], (prevBookmarks) => {
+      if (!prevBookmarks) return prevBookmarks;
+
+      return {
+        ...prevBookmarks,
+        data: prevBookmarks.data.map((tweet) =>
+          tweet._id === tweetId
+            ? {
+                ...tweet,
+                isRetweeted: change.isRetweeted,
+                retweetsCount: change.retweetsCount,
+              }
+            : tweet,
+        ),
+      };
+    });
+  };
+
+  const handleDelete = (tweetId) => {
+    queryClient.setQueryData(["bookmarks"], (prevBookmarks) => {
+      if (!prevBookmarks) return prevBookmarks;
+
+      return {
+        ...prevBookmarks,
+        data: removeTweetById(prevBookmarks.data, tweetId),
+      };
+    });
+  };
+
   if (isError) {
     return <FetchError message={error} />;
   }
@@ -90,6 +139,9 @@ const BookMarkPage = () => {
                   {...bookmark}
                   onLikeChange={handleLikeChange}
                   onBookmarkChange={handleBookmarkChange}
+                  onViewChange={handleViewChange}
+                  onRetweetChange={handleRetweetChange}
+                  onDelete={handleDelete}
                 />
               ))}
             </div>

@@ -80,6 +80,17 @@ const UserProfilePage = () => {
     }
   };
 
+  const handleOwnPostDeleted = () => {
+    if (!isOwnProfile) {
+      return;
+    }
+
+    setProfile((currentProfile) => ({
+      ...currentProfile,
+      totalPost: Math.max(0, Number(currentProfile?.totalPost) - 1),
+    }));
+  };
+
   return (
     <div className="min-h-screen">
       <PageHeader className="px-3 py-2">
@@ -207,7 +218,7 @@ const UserProfilePage = () => {
         </div>
 
         <div>
-          <Outlet />
+          <Outlet context={{ onOwnPostDeleted: handleOwnPostDeleted }} />
         </div>
       </section>
 

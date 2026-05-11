@@ -3,7 +3,14 @@ import { useSearch } from "../../auth/hooks/useSearch";
 import FollowSuggestionCard from "../../follow/components/FollowSuggestionCard";
 import { Search, SearchX } from "lucide-react";
 
-const ForYou = ({ results, onLikeChange, onBookmarkChange }) => {
+const ForYou = ({
+  results,
+  onLikeChange,
+  onBookmarkChange,
+  onViewChange,
+  onRetweetChange,
+  onDelete,
+}) => {
   const { searchQuery: query } = useSearch();
 
   if (!results) {
@@ -71,6 +78,9 @@ const ForYou = ({ results, onLikeChange, onBookmarkChange }) => {
               {...tweet}
               onLikeChange={onLikeChange}
               onBookmarkChange={onBookmarkChange}
+              onViewChange={onViewChange}
+              onRetweetChange={onRetweetChange}
+              onDelete={onDelete}
             />
           ))}
         </div>

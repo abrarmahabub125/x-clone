@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import { removeTweetById, updateTweetById } from "../../../shared/utils/tweetListState";
 
 import { useSearch } from "../../auth/hooks/useSearch";
 
@@ -64,17 +65,6 @@ const ExplorePage = () => {
   // =========================
   // Update Tweet Helper
   // =========================
-  const updateTweetById = (tweets, tweetId, updates) => {
-    return tweets.map((tweet) =>
-      tweet._id === tweetId
-        ? {
-            ...tweet,
-            ...updates,
-          }
-        : tweet,
-    );
-  };
-
   // =========================
   // Like Handler
   // =========================
@@ -118,6 +108,59 @@ const ExplorePage = () => {
     });
   };
 
+  const handleViewChange = (tweetId, change) => {
+    queryClient.setQueryData(["explore", debouncedSearch], (currentData) => {
+      if (!currentData) {
+        return currentData;
+      }
+
+      return {
+        ...currentData,
+        data: {
+          ...currentData.data,
+          tweets: updateTweetById(currentData.data.tweets ?? [], tweetId, {
+            viewsCount: change.viewsCount,
+          }),
+        },
+      };
+    });
+  };
+
+  const handleRetweetChange = (tweetId, change) => {
+    queryClient.setQueryData(["explore", debouncedSearch], (currentData) => {
+      if (!currentData) {
+        return currentData;
+      }
+
+      return {
+        ...currentData,
+        data: {
+          ...currentData.data,
+          tweets: updateTweetById(currentData.data.tweets ?? [], tweetId, {
+            isRetweeted: change.isRetweeted,
+            retweetsCount: change.retweetsCount,
+          }),
+        },
+      };
+    });
+  };
+
+  const handleDelete = (tweetId) => {
+    queryClient.setQueryData(["explore", debouncedSearch], (currentData) => {
+      if (!currentData) {
+        return currentData;
+      }
+
+      return {
+        ...currentData,
+        data: {
+          ...currentData.data,
+          tweets: removeTweetById(currentData.data.tweets ?? [], tweetId),
+        },
+      };
+    });
+  };
+
   return (
     <div>
       <ExploreHeader query={searchQuery} setQuery={setSearchQuery} />
@@ -136,6 +179,9 @@ const ExplorePage = () => {
             results={results?.data}
             onLikeChange={handleLikeChange}
             onBookmarkChange={handleBookmarkChange}
+            onViewChange={handleViewChange}
+            onRetweetChange={handleRetweetChange}
+            onDelete={handleDelete}
           />
         </div>
       )}

@@ -9,11 +9,11 @@ import "./index.css";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <AuthProvider>
-    <SearchProvider>
-      <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <SearchProvider>
         <RouterProvider router={router} />
-      </QueryClientProvider>
-    </SearchProvider>
-  </AuthProvider>,
+      </SearchProvider>
+    </AuthProvider>
+  </QueryClientProvider>,
 );

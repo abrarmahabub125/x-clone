@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useOutletContext, useParams } from "react-router";
 import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
@@ -9,6 +9,7 @@ import ProfileTimeline from "../components/ProfileTimeline";
 
 const ProfileMediaPage = () => {
   const { userId } = useParams();
+  const { onOwnPostDeleted } = useOutletContext();
   const {
     data: medias,
     isLoading,
@@ -38,6 +39,7 @@ const ProfileMediaPage = () => {
       posts={medias.data}
       emptyTitle="Nothing to show here yet."
       emptyDescription="Photos and videos shared from this account will appear here."
+      onDeletePost={onOwnPostDeleted}
     />
   );
 };

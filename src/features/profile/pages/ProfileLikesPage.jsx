@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useOutletContext, useParams } from "react-router";
 import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
@@ -9,6 +9,7 @@ import ProfileTimeline from "../components/ProfileTimeline";
 const ProfileLikesPage = () => {
   const { userId } = useParams();
   const { user } = useAuth();
+  const { onOwnPostDeleted } = useOutletContext();
 
   ///users/${userId}/likes
 
@@ -43,6 +44,7 @@ const ProfileLikesPage = () => {
         removeOnUnlike={user?.id === userId}
         emptyTitle="No likes yet"
         emptyDescription="Posts liked by this account will be listed here."
+        onDeletePost={onOwnPostDeleted}
       />
     </div>
   );

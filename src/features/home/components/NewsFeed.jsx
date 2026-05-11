@@ -1,43 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 import TweetCard from "../../../shared/ui/TweetCard";
-import { updateTweetById } from "../../../shared/utils/tweetListState";
+import {
+  mergeUniqueTweets,
+  removeTweetById,
+  updateTweetById,
+} from "../../../shared/utils/tweetListState";
 
 const NewsFeed = () => {
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(null);
   const [feedData, setFeedData] = useState([]);
+  const isFetchingRef = useRef(false);
 
   const fetchFeedData = async () => {
+    if (isFetchingRef.current) {
+      return;
+    }
+
+    isFetchingRef.current = true;
+
     try {
       const url = cursor
         ? `/api/feed/for-you?cursor=${cursor}&limit=10`
         : `/api/feed/for-you?limit=10`;
 
       const result = await fetcher(url);
-
       const newData = result.data || [];
 
-      // append data
-      setFeedData((prev) => [...prev, ...newData]);
-
-      // update cursor from backend
+      setError(null);
+      setFeedData((prev) => mergeUniqueTweets(prev, newData));
       setCursor(result.nextCursor || null);
-
-      // stop if no more data
-      if (!result.nextCursor || newData.length === 0) {
-        setHasMore(false);
-      }
+      setHasMore(Boolean(result.hasMore));
     } catch (err) {
       setError(err.message);
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 
-  // initial load
   useEffect(() => {
     fetchFeedData();
   }, []);
@@ -57,6 +62,27 @@ const NewsFeed = () => {
         isBookmarked: nextIsBookmarked,
       }),
     );
+  };
+
+  const handleViewChange = (tweetId, change) => {
+    setFeedData((currentFeed) =>
+      updateTweetById(currentFeed, tweetId, {
+        viewsCount: change.viewsCount,
+      }),
+    );
+  };
+
+  const handleRetweetChange = (tweetId, change) => {
+    setFeedData((currentFeed) =>
+      updateTweetById(currentFeed, tweetId, {
+        isRetweeted: change.isRetweeted,
+        retweetsCount: change.retweetsCount,
+      }),
+    );
+  };
+
+  const handleDelete = (tweetId) => {
+    setFeedData((currentFeed) => removeTweetById(currentFeed, tweetId));
   };
 
   if (error) {
@@ -79,10 +105,13 @@ const NewsFeed = () => {
     >
       {feedData.map((tweet, idx) => (
         <TweetCard
-          key={idx}
+          key={tweet._id ?? idx}
           {...tweet}
           onLikeChange={handleLikeChange}
           onBookmarkChange={handleBookmarkChange}
+          onViewChange={handleViewChange}
+          onRetweetChange={handleRetweetChange}
+          onDelete={handleDelete}
         />
       ))}
     </InfiniteScroll>
