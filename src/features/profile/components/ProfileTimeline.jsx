@@ -11,6 +11,7 @@ function normalizeProfilePost(post) {
     userId: post.userId ?? "",
     content: post.content ?? "",
     media: post.media ?? post.image ?? "",
+    location: post.location ?? "",
     likesCount: post.likesCount ?? post.likes ?? 0,
     viewsCount: post.viewsCount ?? post.views ?? 0,
     retweetsCount: post.retweetsCount ?? post.reposts ?? 0,

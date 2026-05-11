@@ -3,6 +3,7 @@ import {
   BarChart2,
   Bookmark,
   Heart,
+  MapPin,
   MoreHorizontal,
   Repeat2,
   TriangleAlert,
@@ -25,6 +26,7 @@ const TweetCard = ({
   userId,
   content,
   media,
+  location,
   likesCount,
   viewsCount,
   retweetsCount,
@@ -447,6 +449,12 @@ const TweetCard = ({
                 </span>
               )}
             </div>
+            {location && (
+              <div className="text-x-text-sec mt-0.5 flex items-center gap-1.5 text-xs font-medium">
+                <MapPin className="size-3.5" />
+                <span className="truncate">{location}</span>
+              </div>
+            )}
           </div>
 
           <div ref={menuRef} className="relative">
@@ -482,10 +490,12 @@ const TweetCard = ({
           </div>
         </div>
 
-        <div className="mt-1.5 space-y-3">
-          <p className="text-x-text text-[15px] leading-6 whitespace-pre-line">
-            {content}
-          </p>
+        <div className="mt-2 space-y-3">
+          {content && (
+            <p className="text-x-text text-[15px] leading-6 whitespace-pre-line">
+              {content}
+            </p>
+          )}
 
           {media && (
             <div className="border-x-divider overflow-hidden rounded-2xl border">
