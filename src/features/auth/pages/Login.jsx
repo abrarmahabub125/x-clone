@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { fetcher } from "../../../../fetcher";
@@ -5,7 +6,6 @@ import XLogo from "../../../shared/assets/logo/x-logo.svg";
 import Spinner from "../../../shared/loaders/Spinner";
 import { loginSchema } from "../../../shared/validations/loginSchema.js";
 import { useAuth } from "../hooks/useAuth";
-import { Eye, EyeOff } from "lucide-react";
 
 const inputClassName =
   "border-x-divider text-x-text placeholder:text-x-text-sec focus:border-x-blue w-full rounded-md border bg-transparent py-2.5 px-3 lg:px-4 lg:py-3.5 text-sm  lg:text-base outline-none transition";

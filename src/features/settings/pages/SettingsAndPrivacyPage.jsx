@@ -8,15 +8,15 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { z } from "zod";
-import toast from "react-hot-toast";
 import { fetcher } from "../../../../fetcher";
-import { useAuth } from "../../auth/hooks/useAuth";
-import { loginSchema } from "../../../shared/validations/loginSchema";
 import BackButton from "../../../shared/ui/BackButton";
 import PageHeader from "../../../shared/ui/PageHeader";
 import SettingIcon from "../../../shared/ui/SettingIcon";
+import { loginSchema } from "../../../shared/validations/loginSchema";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 const emailUpdateSchema = z.object({
   newEmail: loginSchema.shape.email,
@@ -95,7 +95,7 @@ function SettingsField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`border-x-divider bg-x-bg text-x-text w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 ${error ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : ""}`}
+        className={`border-x-divider bg-x-bg text-x-text w-full rounded-2xl border px-4 py-3 text-sm transition outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15 ${error ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : ""}`}
       />
       {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </label>
@@ -355,7 +355,9 @@ const SettingsAndPrivacyPage = () => {
 
                   <button
                     type="button"
-                    onClick={() => setIsEmailOpen((currentValue) => !currentValue)}
+                    onClick={() =>
+                      setIsEmailOpen((currentValue) => !currentValue)
+                    }
                     className="border-x-divider bg-x-surface text-x-text hover:bg-x-divider rounded-full border px-4 py-2 text-sm font-semibold transition"
                   >
                     {isEmailOpen ? "Close" : "Update"}
@@ -472,9 +474,7 @@ const SettingsAndPrivacyPage = () => {
                         disabled={isUpdatingPassword}
                         className="bg-x-bgOpposite text-x-textOpposite rounded-full px-5 py-2 text-sm font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        {isUpdatingPassword
-                          ? "Updating..."
-                          : "Update password"}
+                        {isUpdatingPassword ? "Updating..." : "Update password"}
                       </button>
                     </div>
                   </form>
@@ -534,9 +534,9 @@ const SettingsAndPrivacyPage = () => {
                   Security note
                 </h2>
                 <p className="text-x-text-sec text-sm">
-                  Sensitive settings use current-password confirmation and secure
-                  session cookies. After password changes or account deletion,
-                  your active session is invalidated automatically.
+                  Sensitive settings use current-password confirmation and
+                  secure session cookies. After password changes or account
+                  deletion, your active session is invalidated automatically.
                 </p>
               </div>
             </div>
@@ -571,7 +571,9 @@ const SettingsAndPrivacyPage = () => {
               <button
                 type="button"
                 className="hover:bg-x-surface inline-flex size-10 items-center justify-center rounded-full transition-colors duration-200"
-                onClick={() => !isDeletingAccount && setIsDeleteModalOpen(false)}
+                onClick={() =>
+                  !isDeletingAccount && setIsDeleteModalOpen(false)
+                }
                 disabled={isDeletingAccount}
                 aria-label="Close delete account modal"
               >
@@ -579,7 +581,10 @@ const SettingsAndPrivacyPage = () => {
               </button>
             </div>
 
-            <form onSubmit={submitDeleteAccount} className="space-y-5 px-5 py-5">
+            <form
+              onSubmit={submitDeleteAccount}
+              className="space-y-5 px-5 py-5"
+            >
               <div className="text-x-text-sec bg-x-surface rounded-2xl px-4 py-3 text-sm leading-6">
                 Deleting this account removes your profile, tweets, likes,
                 bookmarks, reposts, views, and follow relationships.
@@ -616,7 +621,7 @@ const SettingsAndPrivacyPage = () => {
 
                 <button
                   type="submit"
-                  className="bg-x-red text-white rounded-full px-4 py-2 text-sm font-semibold transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="bg-x-red rounded-full px-4 py-2 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                   disabled={isDeletingAccount}
                 >
                   {isDeletingAccount ? "Deleting..." : "Delete account"}

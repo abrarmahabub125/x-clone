@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useCallback, useEffect, useState } from "react";
 import { fetcher } from "../../../../fetcher";
+import { AuthContext } from "../context/AuthContext";
 
 const AuthProvider = ({ children }) => {
-  // fetch user data and authentication status here, and pass it down through the context
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -16,9 +15,9 @@ const AuthProvider = ({ children }) => {
       });
       setUser(response?.data?.user ?? null);
     } catch (error) {
-      // Don't log error for 401 (not authenticated) - this is expected
+      // 401 is expected when user is not logged in - don't log it
       if (error?.status !== 401) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user data:", error?.message || error);
       }
       setUser(null);
     } finally {
