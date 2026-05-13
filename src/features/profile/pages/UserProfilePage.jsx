@@ -1,15 +1,15 @@
-import { CalendarDays, MapPin, MoreHorizontal } from "lucide-react";
+import { CalendarDays, MapPin } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { Link, Outlet, useLoaderData, useParams } from "react-router";
+import { Outlet, useLoaderData, useParams } from "react-router";
 import { fetcher } from "../../../../fetcher";
-import { useAuth } from "../../auth/hooks/useAuth";
 import BackButton from "../../../shared/ui/BackButton";
+import FollowButton from "../../../shared/ui/FollowButton";
 import PageHeader from "../../../shared/ui/PageHeader";
 import TabItem from "../../../shared/ui/TabItem";
-import EditProfileModal from "../components/EditProfileModal";
-import FollowButton from "../../../shared/ui/FollowButton";
 import { formatNumber } from "../../../shared/utils/formatNumber";
+import { useAuth } from "../../auth/hooks/useAuth";
+import EditProfileModal from "../components/EditProfileModal";
 
 const FALLBACK_PROFILE_PIC =
   "https://i.ibb.co.com/jZZHbNL5/male-default-placeholder-avatar-profile-gray-picture-isolated-on-background-man-silhouette-picture-f.jpg";
@@ -133,12 +133,6 @@ const UserProfilePage = () => {
             </div>
 
             <div className="mt-3 flex items-center gap-3">
-              <button
-                type="button"
-                className="hover:bg-x-surface border-x-divider inline-flex size-8.5 cursor-pointer items-center justify-center rounded-full border transition-colors duration-200 lg:size-9"
-              >
-                <MoreHorizontal className="size-4 lg:size-5" />
-              </button>
               {isOwnProfile ? (
                 <button
                   type="button"

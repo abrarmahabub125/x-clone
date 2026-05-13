@@ -1,5 +1,5 @@
-import { ImagePlus, MapPin, Quote, UserRound, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Camera, MapPin, Quote, UserRound, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import ProfileField from "./ProfileField";
 
 const FALLBACK_PROFILE_PIC =
@@ -7,14 +7,26 @@ const FALLBACK_PROFILE_PIC =
 const PROFILE_COVER_FALLBACK_CLASS =
   "bg-[linear-gradient(197deg,rgba(63,135,251,0.99)_0%,rgba(70,200,252,1)_100%)]";
 
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
+
 function buildFormState(initialValues = {}) {
   return {
     profilePic: initialValues.profilePic ?? "",
+    profilePicFile: null,
+    profilePicPreview: initialValues.profilePic ?? "",
     fullName: initialValues.fullName ?? "",
     username: initialValues.username ?? "",
     bio: initialValues.bio ?? "",
     location: initialValues.location ?? "",
     coverPhoto: initialValues.coverPhoto ?? "",
+    coverPhotoFile: null,
+    coverPhotoPreview: initialValues.coverPhoto ?? "",
   };
 }
 
@@ -34,21 +46,6 @@ const PROFILE_FIELDS = [
     className: "col-span-1",
   },
   {
-    label: "Profile Pic URL",
-    icon: ImagePlus,
-    name: "profilePic",
-    placeholder: "https://example.com/profile-photo.jpg",
-    className: "col-span-2 md:col-span-1",
-  },
-  {
-    label: "Cover Photo URL",
-    icon: ImagePlus,
-    name: "coverPhoto",
-    placeholder: "https://example.com/cover-photo.jpg",
-    className: "col-span-2 md:col-span-1",
-  },
-
-  {
     label: "Address",
     icon: MapPin,
     name: "location",
@@ -67,13 +64,12 @@ const PROFILE_FIELDS = [
 
 function getTrimmedFormData(formData) {
   return {
-    ...formData,
-    profilePic: formData.profilePic.trim(),
     fullName: formData.fullName.trim(),
     username: formData.username.trim(),
     bio: formData.bio.trim(),
     location: formData.location.trim(),
-    coverPhoto: formData.coverPhoto.trim(),
+    profilePicFile: formData.profilePicFile,
+    coverPhotoFile: formData.coverPhotoFile,
   };
 }
 
@@ -84,6 +80,50 @@ const EditProfileModal = ({
   isSaving = false,
 }) => {
   const [formData, setFormData] = useState(() => buildFormState(initialValues));
+  const [fileErrors, setFileErrors] = useState({});
+  const profilePicInputRef = useRef(null);
+  const coverPhotoInputRef = useRef(null);
+
+  const validateImageFile = (file) => {
+    if (!file) return null;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      return "Only JPEG, PNG, WebP, and GIF formats are allowed";
+    }
+
+    if (file.size > MAX_IMAGE_SIZE) {
+      return "Image size must be less than 5MB";
+    }
+
+    return null;
+  };
+
+  const handleImageFileChange = (event, fieldName) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const error = validateImageFile(file);
+    if (error) {
+      setFileErrors((prev) => ({ ...prev, [fieldName]: error }));
+      return;
+    }
+
+    setFileErrors((prev) => ({ ...prev, [fieldName]: "" }));
+
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const previewUrl = e.target?.result;
+      const previewFieldName = `${fieldName}Preview`;
+      setFormData((current) => ({
+        ...current,
+        [fieldName]: file,
+        [previewFieldName]: previewUrl,
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -103,7 +143,7 @@ const EditProfileModal = ({
   }, [isSaving, onClose]);
 
   const trimmedFormData = getTrimmedFormData(formData);
-  const avatarUrl = trimmedFormData.profilePic || FALLBACK_PROFILE_PIC;
+  const avatarUrl = formData.profilePicPreview || FALLBACK_PROFILE_PIC;
   const previewName = trimmedFormData.fullName || "Your full name";
   const prevUsername = trimmedFormData.username
     ? `@${trimmedFormData.username}`
@@ -118,15 +158,6 @@ const EditProfileModal = ({
 
     if (!PROFILE_FIELDS.some((field) => field.name === name)) {
       return;
-    }
-
-    if (name === "profilePic" || name === "coverPhoto") {
-      try {
-        new URL(value);
-      } catch (e) {
-        // invalid URL, ignore the change
-        return;
-      }
     }
 
     if (name === "username") {
@@ -183,19 +214,6 @@ const EditProfileModal = ({
         return;
       }
     }
-    if (name === "coverPhoto") {
-      // disallow more than 5MB in cover photo
-      if (value.length > 5000) {
-        return;
-      }
-    }
-
-    if (name === "profilePic") {
-      // disallow more than 5MB in profile pic
-      if (value.length > 5000) {
-        return;
-      }
-    }
 
     setFormData((currentFormData) => ({
       ...currentFormData,
@@ -203,9 +221,20 @@ const EditProfileModal = ({
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    onSave(trimmedFormData);
+
+    // Prepare data for submission
+    const submitData = {
+      fullName: trimmedFormData.fullName,
+      username: trimmedFormData.username,
+      bio: trimmedFormData.bio,
+      location: trimmedFormData.location,
+      profilePic: formData.profilePicPreview || "",
+      coverPhoto: formData.coverPhotoPreview || "",
+    };
+
+    onSave(submitData);
   };
 
   return (
@@ -251,11 +280,12 @@ const EditProfileModal = ({
 
         <div className="custom-scrollbar flex-1 overflow-y-auto p-5">
           <div className="border-x-divider overflow-hidden rounded-[1.75rem] border">
+            {/* Cover Photo Section */}
             <div className="relative h-36 overflow-hidden md:h-44">
-              {trimmedFormData.coverPhoto ? (
+              {formData.coverPhotoPreview ? (
                 <img
                   className="h-full w-full object-cover object-center"
-                  src={trimmedFormData.coverPhoto}
+                  src={formData.coverPhotoPreview}
                   alt="Profile cover preview"
                 />
               ) : (
@@ -269,16 +299,69 @@ const EditProfileModal = ({
               <span className="absolute top-4 right-4 rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
                 Live preview
               </span>
+
+              {/* Cover Photo Camera Button */}
+              <button
+                type="button"
+                className="bg-x-surface absolute right-4 bottom-4 rounded-full p-2.5 text-white transition-all duration-150 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={() => coverPhotoInputRef.current?.click()}
+                disabled={isSaving}
+                title="Change cover photo"
+              >
+                <Camera className="size-5" />
+              </button>
+
+              <input
+                ref={coverPhotoInputRef}
+                type="file"
+                accept={ALLOWED_IMAGE_TYPES.join(",")}
+                onChange={(e) => handleImageFileChange(e, "coverPhoto")}
+                className="hidden"
+                disabled={isSaving}
+              />
             </div>
 
+            {/* Profile Pic and Info */}
             <div className="bg-x-bg px-5 pb-5">
-              <div className="border-x-bg bg-x-bg relative z-10 -mt-14 size-24 overflow-hidden rounded-full border-3 shadow-xl md:-mt-12 lg:size-28">
+              <div className="border-x-bg bg-x-bg group relative z-10 -mt-14 size-24 rounded-full border-3 md:-mt-12 lg:size-28">
                 <img
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full rounded-full object-cover object-center"
                   src={avatarUrl}
                   alt="Profile avatar preview"
                 />
+
+                {/* Profile Pic Camera Button */}
+                <button
+                  type="button"
+                  className="bg-x-surface absolute right-0 bottom-0 rounded-full p-2 text-white transition-all duration-150 hover:scale-105"
+                  onClick={() => profilePicInputRef.current?.click()}
+                  disabled={isSaving}
+                  title="Change profile picture"
+                >
+                  <Camera className="size-4" />
+                </button>
+
+                <input
+                  ref={profilePicInputRef}
+                  type="file"
+                  accept={ALLOWED_IMAGE_TYPES.join(",")}
+                  onChange={(e) => handleImageFileChange(e, "profilePic")}
+                  className="hidden"
+                  disabled={isSaving}
+                />
               </div>
+
+              {/* File Error Messages */}
+              {fileErrors.profilePicFile && (
+                <p className="mt-2 text-xs text-red-500">
+                  {fileErrors.profilePicFile}
+                </p>
+              )}
+              {fileErrors.coverPhotoFile && (
+                <p className="mt-2 text-xs text-red-500">
+                  {fileErrors.coverPhotoFile}
+                </p>
+              )}
 
               <div className="mt-2 space-y-2 md:mt-4">
                 <h3 className="text-x-text text-lg font-semibold md:text-2xl">

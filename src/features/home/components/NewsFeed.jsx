@@ -46,8 +46,6 @@ const NewsFeed = () => {
 
       setHasMore(Boolean(result?.meta?.hasMore));
 
-      console.log(result);
-
       setError(null);
     } catch (err) {
       console.error(err);
