@@ -147,7 +147,7 @@ const SettingsAndPrivacyPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
+    <div className="bg-x-bg text-x-text min-h-screen">
       <PageHeader className="px-3 py-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ const SettingsAndPrivacyPage = () => {
           <h2 className="text-x-text-sec flex items-center gap-2 px-2 text-sm font-semibold tracking-wider lg:text-base">
             <User className="size-4" /> Account Management
           </h2>
-          <div className="border-x-divider overflow-hidden rounded-lg border bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50">
+          <div className="border-x-divider overflow-hidden rounded-lg border">
             <SettingsItem
               icon={Mail}
               title="Email Address"
@@ -175,7 +175,7 @@ const SettingsAndPrivacyPage = () => {
                 setActiveModal("email");
               }}
             />
-            <hr className="border-x-divider mx-4 dark:border-zinc-800" />
+            <hr className="border-x-divider mx-4" />
             <SettingsItem
               icon={KeyRound}
               title="Password"
@@ -202,9 +202,9 @@ const SettingsAndPrivacyPage = () => {
         </div>
 
         {/* Security Info */}
-        <div className="flex items-start gap-4 rounded-lg bg-blue-50/50 p-6 text-blue-800 dark:bg-blue-500/10 dark:text-blue-200">
-          <ShieldCheck className="size-6 shrink-0 text-blue-500" />
-          <p className="text-sm leading-relaxed text-blue-800 dark:text-blue-200">
+        <div className="bg-x-blue/10 text-x-blue flex items-start gap-4 rounded-lg p-6">
+          <ShieldCheck className="text-x-blue size-6 shrink-0" />
+          <p className="text-x-blue text-sm leading-relaxed">
             Sensitive actions like changing email or password require your
             current password for security verification. Active sessions will be
             managed accordingly.
