@@ -500,7 +500,7 @@ const TweetCard = ({
           {media && (
             <div className="border-x-divider overflow-hidden rounded-2xl border">
               <img
-                className="h-auto max-h-[32rem] w-full object-cover object-center"
+                className="h-auto max-h-128 w-full object-cover object-center"
                 src={media}
                 alt="tweet media"
               />

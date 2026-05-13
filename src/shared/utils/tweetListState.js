@@ -40,3 +40,32 @@ export function mergeUniqueTweets(existingTweets, incomingTweets) {
 
   return mergedTweets;
 }
+
+/**
+ * Alternates followed and non-followed user posts
+ * Arranges posts in pattern: [followed, non-followed, followed, non-followed, ...]
+ * @param {Array} tweets - Array of tweets with isUserFollowed property
+ * @returns {Array} - Alternated tweets array
+ */
+export function alternateFollowedAndNonFollowed(tweets) {
+  if (!Array.isArray(tweets) || tweets.length === 0) {
+    return tweets;
+  }
+
+  const followed = tweets.filter((tweet) => tweet.isUserFollowed === true);
+  const nonFollowed = tweets.filter((tweet) => tweet.isUserFollowed !== true);
+
+  const alternated = [];
+  const maxLength = Math.max(followed.length, nonFollowed.length);
+
+  for (let i = 0; i < maxLength; i++) {
+    if (i < followed.length) {
+      alternated.push(followed[i]);
+    }
+    if (i < nonFollowed.length) {
+      alternated.push(nonFollowed[i]);
+    }
+  }
+
+  return alternated;
+}

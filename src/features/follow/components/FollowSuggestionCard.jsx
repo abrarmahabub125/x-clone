@@ -1,5 +1,10 @@
+import { useEffect } from "react";
 import { Link } from "react-router";
 import FollowButton from "../../../shared/ui/FollowButton";
+import {
+  getFollowStatus,
+  setFollowStatus,
+} from "../../../shared/ui/followStatusStore";
 
 const FollowSuggestionCard = ({
   userId,
@@ -7,10 +12,21 @@ const FollowSuggestionCard = ({
   profilePic,
   username,
   bio,
+  isFollowing: initialFollowStatus,
 }) => {
   const avatar =
     profilePic ||
     "https://i.ibb.co.com/jZZHbNL5/male-default-placeholder-avatar-profile-gray-picture-isolated-on-background-man-silhouette-picture-f.jpg";
+
+  // Initialize follow status from API response if provided
+  useEffect(() => {
+    if (initialFollowStatus !== undefined && initialFollowStatus !== null) {
+      // Only set if not already cached
+      if (getFollowStatus(userId) === null) {
+        setFollowStatus(userId, initialFollowStatus);
+      }
+    }
+  }, [userId, initialFollowStatus]);
 
   return (
     <article className="border-x-divider hover:bg-x-surface/40 flex items-start gap-3 border-b px-4 py-4 transition-colors duration-200">

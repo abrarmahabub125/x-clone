@@ -9,6 +9,10 @@ const Logout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const { user } = useAuth();
+  const FALLBACK_PROFILE_PIC =
+    "https://i.ibb.co.com/jZZHbNL5/male-default-placeholder-avatar-profile-gray-picture-isolated-on-background-man-silhouette-picture-f.jpg";
+
   const handleLogout = async () => {
     try {
       setIsSubmitting(true);
@@ -33,32 +37,43 @@ const Logout = () => {
 
   return (
     <div className="bg-x-bg flex min-h-screen items-center justify-center px-4">
-      <div className="border-x-divider bg-x-surface w-full max-w-md rounded-2xl border p-6">
-        <h2 className="text-x-text mb-2 text-center text-xl font-semibold">
-          Are you sure you want to logout?
+      <div className="border-x-divider bg-x-bg w-full max-w-md rounded-2xl border p-6">
+        <div className="mb-6 flex flex-col items-center gap-2">
+          <div className="bg-x-surface mb-1 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full">
+            <img
+              src={user?.profilePic || FALLBACK_PROFILE_PIC}
+              alt="Profile"
+              className="h-full w-full object-cover object-center"
+            />
+          </div>
+          <h1 className="text-x-text text-lg font-bold">
+            {user?.fullName || "User"}
+          </h1>
+        </div>
+
+        <h2 className="text-x-text mb-2 text-left text-xl font-semibold">
+          Are you sure you want to logout ?
         </h2>
-        <p className="text-x-text-sec mb-6 text-center text-sm">
+        <p className="text-x-text-sec mb-6 text-left text-sm">
           You will need to login again to access your account.
         </p>
 
         {errorMessage && (
-          <p className="mb-4 text-center text-sm text-red-500">
-            {errorMessage}
-          </p>
+          <p className="mb-4 text-left text-sm text-red-500">{errorMessage}</p>
         )}
 
         <div className="flex gap-3">
           <button
             onClick={handleLogout}
             disabled={isSubmitting}
-            className="bg-x-red/15 text-x-red flex-1 rounded-xl border py-2 font-medium transition duration-200 disabled:opacity-60"
+            className="bg-x-red/10 text-x-red flex-1 cursor-pointer rounded-md py-2 font-medium transition duration-200 disabled:opacity-60"
           >
             {isSubmitting ? "Logging out..." : "Logout"}
           </button>
 
           <button
             onClick={handleCancel}
-            className="border-x-divider text-x-text hover:bg-x-surface flex-1 rounded-xl border bg-transparent py-2 font-medium transition duration-200"
+            className="text-x-text hover:bg-x-surface border-x-divider flex-1 rounded-md border bg-transparent py-2 font-medium transition duration-200"
           >
             Cancel
           </button>

@@ -1,14 +1,14 @@
-import TweetCard from "../../../shared/ui/TweetCard";
 import { useEffect, useRef, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { fetcher } from "../../../../fetcher";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
+import TweetCard from "../../../shared/ui/TweetCard";
 import {
   mergeUniqueTweets,
   removeTweetById,
   updateTweetById,
 } from "../../../shared/utils/tweetListState";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const FollowingFeed = () => {
   const [cursor, setCursor] = useState(null);
@@ -34,8 +34,8 @@ const FollowingFeed = () => {
 
       setError(null);
       setFollowingData((prev) => mergeUniqueTweets(prev, newData));
-      setCursor(result.nextCursor || null);
-      setHasMore(Boolean(result.hasMore));
+      setCursor(result.meta?.nextCursor || null);
+      setHasMore(Boolean(result.meta?.hasMore));
     } catch (err) {
       setError(err.message);
     } finally {

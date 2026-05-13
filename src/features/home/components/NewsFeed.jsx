@@ -1,48 +1,64 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+
 import { fetcher } from "../../../../fetcher";
+
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
 import TweetCard from "../../../shared/ui/TweetCard";
+
 import {
+  alternateFollowedAndNonFollowed,
   mergeUniqueTweets,
   removeTweetById,
   updateTweetById,
 } from "../../../shared/utils/tweetListState";
+
+const LIMIT = 10;
 
 const NewsFeed = () => {
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(null);
   const [feedData, setFeedData] = useState([]);
-  const isFetchingRef = useRef(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchFeedData = async () => {
-    if (isFetchingRef.current) {
-      return;
-    }
-
-    isFetchingRef.current = true;
+    // Prevent duplicate fetch
+    if (loading || !hasMore) return;
 
     try {
+      setLoading(true);
+
       const url = cursor
-        ? `/api/feed/for-you?cursor=${cursor}&limit=10`
-        : `/api/feed/for-you?limit=10`;
+        ? `/api/feed/for-you?cursor=${cursor}&limit=${LIMIT}`
+        : `/api/feed/for-you?limit=${LIMIT}`;
 
       const result = await fetcher(url);
-      const newData = result.data || [];
+
+      const newData = result?.data || [];
+
+      const alternatedNewData = alternateFollowedAndNonFollowed(newData);
+
+      setFeedData((prev) => mergeUniqueTweets(prev, alternatedNewData));
+
+      setCursor(result?.meta?.nextCursor || null);
+
+      setHasMore(Boolean(result?.meta?.hasMore));
+
+      console.log(result);
 
       setError(null);
-      setFeedData((prev) => mergeUniqueTweets(prev, newData));
-      setCursor(result.nextCursor || null);
-      setHasMore(Boolean(result.hasMore));
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+
+      setError(err?.message || "Something went wrong");
     } finally {
-      isFetchingRef.current = false;
+      setLoading(false);
     }
   };
 
+  // Initial fetch
   useEffect(() => {
     fetchFeedData();
   }, []);
@@ -85,7 +101,7 @@ const NewsFeed = () => {
     setFeedData((currentFeed) => removeTweetById(currentFeed, tweetId));
   };
 
-  if (error) {
+  if (error && feedData.length === 0) {
     return <FetchError message={error} />;
   }
 
@@ -103,9 +119,9 @@ const NewsFeed = () => {
         <p className="text-x-text-sec py-4 text-center">No more tweets</p>
       }
     >
-      {feedData.map((tweet, idx) => (
+      {feedData.map((tweet) => (
         <TweetCard
-          key={tweet._id ?? idx}
+          key={tweet._id}
           {...tweet}
           onLikeChange={handleLikeChange}
           onBookmarkChange={handleBookmarkChange}

@@ -1,7 +1,7 @@
+import { Search, SearchX } from "lucide-react";
 import TweetCard from "../../../shared/ui/TweetCard";
 import { useSearch } from "../../auth/hooks/useSearch";
 import FollowSuggestionCard from "../../follow/components/FollowSuggestionCard";
-import { Search, SearchX } from "lucide-react";
 
 const ForYou = ({
   results,

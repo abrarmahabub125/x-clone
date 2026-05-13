@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { axiosInstance } from "../../../shared/lib/axiosInstance";
 import Spinner from "../../../shared/loaders/Spinner";
 import FetchError from "../../../shared/ui/FetchError";
-import { removeTweetById, updateTweetById } from "../../../shared/utils/tweetListState";
+import {
+  removeTweetById,
+  updateTweetById,
+} from "../../../shared/utils/tweetListState";
 
 import { useSearch } from "../../auth/hooks/useSearch";
 
