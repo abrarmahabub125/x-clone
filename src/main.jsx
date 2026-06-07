@@ -8,10 +8,12 @@ import SearchProvider from "./features/auth/providers/SearchProvider.jsx";
 import "./index.css";
 
 const queryClient = new QueryClient();
+const googleClientId =
+  "895952574720-ramf138ck4r2tevqghvoc8aut09av8ci.apps.googleusercontent.com";
 
 createRoot(document.getElementById("root")).render(
   <QueryClientProvider client={queryClient}>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={googleClientId}>
       <AuthProvider>
         <SearchProvider>
           <RouterProvider router={router} />
